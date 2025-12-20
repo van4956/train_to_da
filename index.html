@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Тренажёр для подготовки к собеседованиям</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Вопросы по: AI, ML, SQL, Python, Алгоритмам, Статистике, Теории вероятностей, A/B тестам, Метрикам, Мышлению. Подготовка к собеседованиям на позицию DA / DS / ML." />
+
+  <!-- Общие стили -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <linkrel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Markdown -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+
+
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="header">
+    <div class="header__content">
+
+      <h1 class="header__title">Тренажёр для подготовки к собеседованиям</h1>
+      <p class="header__subtitle">
+        Более 400 вопросов по: AI, ML, SQL, Python, Алгоритмам, Статистике, Теории вероятностей, A/B тестам, Метрикам, Мышлению.
+        Тренажёр построен на основе Markdown-заметок из личной Базы Знаний Obsidian.
+        Фильтры по темам и уровню сложности. Четыре режима повторения.
+
+      </p>
+
+      <!-- <div class="header__links">
+        <a href="https://t.me/van4956" target="_blank">Telegram</a>
+        <a href="https://github.com/van4956" target="_blank">GitHub</a>
+        <a href="https://www.linkedin.com/in/goncharov-ivan/" target="_blank">LinkedIn</a>
+      </div> -->
+
+      <nav class="header__nav">
+        <a href="index.html" class="nav__link nav__link--active">Каталог</a>
+        <a href="cards.html" class="nav__link">Карточки</a>
+        <a href="blitz.html" class="nav__link">Блиц</a>
+        <a href="interview.html" class="nav__link">Интервью</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+
+    <!-- ===== ФИЛЬТРЫ ===== -->
+    <section class="filters">
+      <div class="filters__group">
+
+        <label for="topicFilter">Тема</label>
+        <select id="topicFilter">
+          <option value="all">Все темы</option>
+          <!-- темы подставляются из data.json -->
+        </select>
+
+      </div>
+
+      <div class="filters__group">
+
+        <label for="levelFilter">Уровень</label>
+        <select id="levelFilter">
+          <option value="all">Все уровни</option>
+          <option value="lvl_1">Easy</option>
+          <option value="lvl_2">Medium</option>
+          <option value="lvl_3">Hard</option>
+        </select>
+
+      </div>
+    </section>
+
+    <!-- ===== СТАТИСТИКА ===== -->
+    <section class="stats">
+      <div class="stats__item">
+        <span class="stats__value" id="totalCards">0</span>
+        <span class="stats__label">карточек</span>
+      </div>
+
+      <div class="stats__item">
+        <span class="stats__value" id="lvl1Count">0</span>
+        <span class="stats__label">Easy</span>
+      </div>
+
+      <div class="stats__item">
+        <span class="stats__value" id="lvl2Count">0</span>
+        <span class="stats__label">Medium</span>
+      </div>
+
+      <div class="stats__item">
+        <span class="stats__value" id="lvl3Count">0</span>
+        <span class="stats__label">Hard</span>
+      </div>
+    </section>
+
+    <!-- ===== СПИСОК КАРТОЧЕК ===== -->
+    <section class="catalog">
+
+      <!-- ОДНА КАРТОЧКА (ШАБЛОН) -->
+      <article class="card">
+        <div class="card__meta">
+          <span class="card__topic">SQL</span>
+          <span class="card__level">Easy</span>
+          <span class="card__id">#001</span>
+        </div>
+
+        <div class="card__question">
+          Чем отличается INNER JOIN от LEFT JOIN и когда использовать каждый?
+        </div>
+
+        <div class="card__answer card__answer--hidden">
+          INNER JOIN возвращает только совпадающие строки...
+        </div>
+
+        <button class="card__toggle">
+          Показать ответ
+        </button>
+      </article>
+
+      <!-- карточки будут рендериться JS-ом -->
+
+    </section>
+
+  </main>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/filters.js"></script>
+  <script src="assets/js/catalog.js"></script>
+
+</body>
+</html>
