@@ -46,11 +46,21 @@ def parse_topics(path: Path) -> dict:
 # ------------------------
 
 def parse_card(path: Path) -> dict:
+    """
+    Парсит карточку из Markdown файла.
+    Поддерживает разделители: --- или ___
+    """
     raw = path.read_text(encoding="utf-8").strip()
-    parts = [p.strip() for p in raw.split("---")]
+
+    # Нормализуем разделители: заменяем ___ на ---
+    # Это позволяет поддерживать оба варианта
+    normalized = raw.replace("___", "---")
+
+    # Разбиваем по разделителю ---
+    parts = [p.strip() for p in normalized.split("---")]
 
     if len(parts) < 3:
-        raise ValueError(f"Неверный формат карточки: {path.name}")
+        raise ValueError(f"Неверный формат карточки: {path.name}. Ожидается формат: Вопрос --- Ответ --- #теги")
 
     question = parts[0]
     answer = parts[1]
@@ -105,7 +115,7 @@ def build():
         encoding="utf-8"
     )
 
-    print(f"✓ data.json собран: {len(cards)} карточек")
+    print(f"[OK] data.json собран: {len(cards)} карточек")
 
 
 # ------------------------
