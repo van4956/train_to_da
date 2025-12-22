@@ -11,6 +11,8 @@
   :root {
     --content-max-width: 1100px;
     --solid-bg-color: rgb(37, 16, 79);
+    --button-primary-color: rgb(83, 32, 147);
+    --border-color: rgb(76, 59, 111);
   }
 
   /* ================= BASE ================= */
@@ -47,7 +49,7 @@
     background: rgba(20, 30, 50, 0.55);
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 8px;
     cursor: pointer;
@@ -78,13 +80,14 @@
   /* ================= HEADER ================= */
 
   .header {
-    border-bottom: 1px solid #1f2933;
+    border-bottom: 1px solid var(--border-color);
   }
 
   .header__content {
     max-width: var(--content-max-width);
     margin: 0 auto;
     padding: 32px 24px;
+    box-sizing: border-box;
   }
 
   .header__title {
@@ -123,12 +126,12 @@
   }
 
   .nav__link:hover {
-    background-color: rgba(86, 31, 151, 0.5);
+    background-color: var(--button-primary-color);
     color: #ffffff;
   }
 
   .nav__link--active {
-    background-color: rgba(86, 31, 151, 0.5);
+    background-color: var(--button-primary-color);
     color: #ffffff;
   }
 
@@ -146,9 +149,10 @@
   /* ================= MAIN ================= */
 
   .main {
-    padding: 24px;
     max-width: var(--content-max-width);
     margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
   }
 
   /* ================= FILTERS ================= */
@@ -180,7 +184,7 @@
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
     color: #e6e6e6;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--border-color);
     padding: 6px 8px;
     border-radius: 14px;
     font-family: inherit;
@@ -222,7 +226,7 @@
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
     color: #e6e6e6;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--border-color);
     padding: 6px 8px;
     padding-right: 28px;
     border-radius: 14px;
@@ -280,7 +284,7 @@
     background: rgba(20, 30, 50, 0.55);
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--border-color);
     border-radius: 14px;
     margin: 0;
     padding: 4px;
@@ -334,7 +338,7 @@
     background: rgba(20, 30, 50, 0.55);
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--border-color);
     border-radius: 14px;
     padding: 12px 16px;
     font-size: 14px;
@@ -377,7 +381,7 @@
     background: rgba(20, 30, 50, 0.55);
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--border-color);
     border-radius: 14px;
     padding: 16px;
   }
@@ -434,7 +438,7 @@
 
   .card__toggle {
     background: none;
-    border: 1px solid #1f2933;
+    border: 1px solid var(--border-color);
     color: #e6e6e6;
     padding: 6px 12px;
     border-radius: 6px;
@@ -442,7 +446,7 @@
   }
 
   .card__toggle:hover {
-    background-color: rgba(147, 51, 234, 0.3);
+    background-color: var(--button-primary-color);
   }
 
   /* ================= EMPTY RESULTS ================= */
@@ -459,12 +463,14 @@
   .footer {
     margin-top: 64px;
     padding: 32px 24px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid var(--border-color);
   }
 
   .footer__content {
     max-width: var(--content-max-width);
     margin: 0 auto;
+    padding: 32px 24px;
+    box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -488,4 +494,139 @@
   .footer__icon {
     color: inherit;
     flex-shrink: 0;
+  }
+
+  /* ================= CARDS MODE ================= */
+
+  .cards-mode {
+    width: 100%;
+  }
+
+  .cards-mode__container {
+    width: 100%;
+  }
+
+  .cards-mode__filter {
+    margin-bottom: 24px;
+  }
+
+  .cards-mode__filter label {
+    display: block;
+    font-size: 12px;
+    color: #9ca3af;
+    margin-bottom: 4px;
+  }
+
+  .cards-mode__card {
+    background: rgba(20, 30, 50, 0.55);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 32px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    /* Высота будет автоматически увеличиваться при показе ответа */
+  }
+
+  /* Режим без прозрачности - карточка режима карточек */
+  body.no-glass .cards-mode__card {
+    background: var(--solid-bg-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .cards-mode__question-section {
+    margin-bottom: 32px;
+  }
+
+  .cards-mode__answer-section {
+    flex: 1;
+    margin-bottom: 32px;
+  }
+
+  .cards-mode__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .cards-mode__question {
+    font-size: 18px;
+    color: #e6e6e6;
+    line-height: 1.6;
+  }
+
+  .cards-mode__answer {
+    font-size: 16px;
+    color: #cbd5e1;
+    line-height: 1.6;
+    display: none; /* Изначально скрыт */
+  }
+
+  /* Стили для списков внутри карточек режима карточек */
+  .cards-mode__card ul,
+  .cards-mode__card ol {
+    margin: 8px 0;
+    padding-left: 24px;
+  }
+
+  .cards-mode__card li {
+    margin: 4px 0;
+    line-height: 1.6;
+  }
+
+  .cards-mode__card ul {
+    list-style-type: disc;
+  }
+
+  .cards-mode__card ol {
+    list-style-type: decimal;
+  }
+
+  .cards-mode__controls {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+  }
+
+  .cards-mode__button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    border: 1px solid var(--border-color);
+  }
+
+  .cards-mode__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .cards-mode__button--show {
+    background: transparent;
+    color: #e6e6e6;
+    border-color: var(--border-color);
+  }
+
+  .cards-mode__button--show:hover:not(:disabled) {
+    background: var(--button-primary-color);
+    border-color: var(--border-color);
+  }
+
+  .cards-mode__button--next {
+    background: transparent;
+    color: #e6e6e6;
+    border-color: var(--border-color);
+  }
+
+  .cards-mode__button--next:hover {
+    background: var(--button-primary-color);
+    border-color: var(--border-color);
   }

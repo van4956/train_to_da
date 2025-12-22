@@ -69,7 +69,7 @@ const FILTERS = {
     const list = dropdownWrapper.querySelector(".custom-dropdown__list");
 
     // Если это dropdown тем, заполняем список из select
-    if (selectId === "topicFilter") {
+    if (selectId === "topicFilter" || selectId === "cardsTopicFilter") {
       const options = Array.from(selectEl.options);
       list.innerHTML = "";
       options.forEach(option => {
@@ -133,6 +133,7 @@ const FILTERS = {
       } else if (selectId === "levelFilter") {
         FILTERS.level = value;
       }
+      // cardsTopicFilter не обновляет FILTERS, так как это отдельный режим
 
       // Обновляем UI
       updateSelectedText();

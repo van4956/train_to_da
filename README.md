@@ -41,6 +41,7 @@
 │   │   ├── data.js     # загрузка data.json
 │   │   ├── filters.js  # ильтрация по теме, по уровню
 │   │   ├── catalog.js  # логика каталога, рендер карточек, счётчики
+│   │   ├── cards.js    # логика режима карточек
 │   │   └── utils.js    # random, shuffle, форматирование
 │   └── icons/
 └── README.md

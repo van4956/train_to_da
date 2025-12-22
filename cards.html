@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Тренажёр для подготовки к собеседованиям - Карточки</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Вопросы по: AI, ML, SQL, Python, Алгоритмам, Статистике, Теории вероятностей, A/B тестам, Метрикам, Мышлению. Подготовка к собеседованиям на позицию DA / DS / ML." />
+
+  <!-- Общие стили -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Markdown -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+
+
+</head>
+
+<body>
+
+  <!-- ================= GLASSMORPHISM TOGGLE ================= -->
+  <div class="glass-toggle">
+    <button type="button" class="glass-toggle__button" id="glassToggle" aria-label="Переключить прозрачность">
+      <svg class="glass-toggle__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20M2 12h20"></path>
+        <circle cx="12" cy="12" r="4"></circle>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ================= HEADER ================= -->
+  <header class="header">
+    <div class="header__content">
+
+      <h1 class="header__title">Тренажёр для подготовки к собеседованиям</h1>
+      <p class="header__subtitle">
+        Более 400 вопросов по: AI, ML, SQL, Python, Алгоритмам, Статистике, Теории вероятностей, A/B тестам, Метрикам, Мышлению.
+        Тренажёр построен на основе Markdown-заметок из личной Базы Знаний Obsidian.
+        Фильтры по темам и уровню сложности. Четыре режима повторения.
+
+      </p>
+
+      <nav class="header__nav">
+        <a href="index.html" class="nav__link">Каталог</a>
+        <a href="cards.html" class="nav__link nav__link--active">Карточки</a>
+        <a href="blitz.html" class="nav__link">Блиц</a>
+        <a href="interview.html" class="nav__link">Интервью</a>
+      </nav>
+
+      <p class="header__mode-description">Фокусированное повторение по одной карточке. Ответ скрыт до момента самопроверки.</p>
+
+    </div>
+  </header>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+
+    <!-- ===== БЛОК КАРТОЧКИ ===== -->
+    <section class="cards-mode">
+      <div class="cards-mode__container">
+
+        <!-- Фильтр "Фокус карточек" -->
+        <div class="cards-mode__filter">
+          <label for="cardsTopicFilter">Фокус карточек</label>
+          <div class="custom-dropdown" data-select-id="cardsTopicFilter">
+            <select id="cardsTopicFilter" style="display: none;">
+              <option value="all">Все темы</option>
+              <!-- темы подставляются из data.json -->
+            </select>
+            <button type="button" class="custom-dropdown__button" aria-haspopup="listbox">
+              <span class="custom-dropdown__selected">Все темы</span>
+              <svg class="custom-dropdown__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M6 9L1 4h10L6 9z" fill="currentColor"/>
+              </svg>
+            </button>
+            <ul class="custom-dropdown__list" role="listbox"></ul>
+          </div>
+        </div>
+
+        <!-- Карточка -->
+        <div class="cards-mode__card" id="cardsModeCard">
+          <div class="cards-mode__question-section">
+            <div class="cards-mode__label">ВОПРОС</div>
+            <div class="cards-mode__question" id="cardsModeQuestion">
+              <!-- вопрос рендерится JS-ом -->
+            </div>
+          </div>
+
+          <div class="cards-mode__answer-section">
+            <div class="cards-mode__label">ОТВЕТ</div>
+            <div class="cards-mode__answer" id="cardsModeAnswer">
+              <!-- ответ рендерится JS-ом -->
+            </div>
+          </div>
+
+          <div class="cards-mode__controls">
+            <button type="button" class="cards-mode__button cards-mode__button--show" id="cardsModeShowAnswer">
+              Показать ответ
+            </button>
+            <button type="button" class="cards-mode__button cards-mode__button--next" id="cardsModeNext">
+              Следующий вопрос
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="footer__content">
+      <a href="https://github.com/van4956" target="_blank" rel="noopener noreferrer" class="footer__link">
+        <svg class="footer__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+        </svg>
+        <span>GitHub</span>
+      </a>
+      <a href="https://www.linkedin.com/in/goncharov-ivan/" target="_blank" rel="noopener noreferrer" class="footer__link">
+        <svg class="footer__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+          <rect x="2" y="9" width="4" height="12"></rect>
+          <circle cx="4" cy="4" r="2"></circle>
+        </svg>
+        <span>LinkedIn</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/filters.js"></script>
+  <script src="assets/js/cards.js"></script>
+  <script>
+    // Применяем сохранённое состояние прозрачности до загрузки DOM
+    // чтобы избежать мигания при переключении
+    (function() {
+      const savedState = localStorage.getItem("glassmorphismEnabled");
+      if (savedState === "false") {
+        document.body.classList.add("no-glass");
+      }
+    })();
+  </script>
+
+</body>
+</html>
