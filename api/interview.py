@@ -4,11 +4,10 @@ Serverless функция для проверки ответов пользов�
 
 import json
 import os
-from http.server import BaseHTTPRequestHandler
 from openai import OpenAI
 
 
-def handler(event, context):
+def handler(request):
     """
     Обработчик запросов от фронтенда.
     Принимает вопрос, эталонный ответ и ответ пользователя.
@@ -24,7 +23,7 @@ def handler(event, context):
     }
 
     # Обработка preflight запроса (OPTIONS)
-    if event.get('httpMethod') == 'OPTIONS':
+    if request.method == 'OPTIONS':
         return {
             'statusCode': 200,
             'headers': headers,
@@ -32,7 +31,7 @@ def handler(event, context):
         }
 
     # Проверка метода запроса
-    if event.get('httpMethod') != 'POST':
+    if request.method != 'POST':
         return {
             'statusCode': 405,
             'headers': headers,
@@ -41,7 +40,7 @@ def handler(event, context):
 
     try:
         # Парсим тело запроса
-        body = json.loads(event.get('body', '{}'))
+        body = json.loads(request.body)
 
         question = body.get('question', '').strip()
         expected_answer = body.get('expected_answer', '').strip()
