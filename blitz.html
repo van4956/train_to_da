@@ -153,14 +153,16 @@
   <script src="assets/js/filters.js"></script>
   <script src="assets/js/blitz.js"></script>
   <script>
-    // Применяем сохранённое состояние прозрачности до загрузки DOM
-    // чтобы избежать мигания при переключении
-    (function() {
+    // ОТКЛЮЧЕНО: Режим glassmorphism деактивирован
+    // Применяем режим без стекла по умолчанию
+    document.body.classList.add("no-glass");
+
+    /* (function() {
       const savedState = localStorage.getItem("glassmorphismEnabled");
       if (savedState === "false") {
         document.body.classList.add("no-glass");
       }
-    })();
+    })(); */
   </script>
 
 </body>

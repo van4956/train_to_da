@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       initFilters({
         onChange: () => renderCatalog(),
       });
-      initGlassToggle();
+      // initGlassToggle(); // ОТКЛЮЧЕНО: режим стекла деактивирован
+      document.body.classList.add("no-glass"); // Устанавливаем режим без стекла по умолчанию
       renderCatalog();
     } catch (err) {
       console.error(err);
@@ -15,8 +16,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   /**
    * Инициализация переключателя прозрачности
+   * ОТКЛЮЧЕНО: функционал glassmorphism закомментирован
    */
-  function initGlassToggle() {
+  /* function initGlassToggle() {
     const toggleButton = document.getElementById("glassToggle");
     if (!toggleButton) return;
 
@@ -42,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         localStorage.setItem("glassmorphismEnabled", "false");
       }
     });
-  }
+  } */
 
   function renderMath() {
     if (typeof renderMathInElement !== "function") return;
@@ -77,9 +79,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderMarkdown() {
     if (typeof hljs !== "undefined") {
-      document.querySelectorAll("pre code").forEach(block => {
-        hljs.highlightElement(block);
-      });
+      // Ищем все блоки кода внутри каталога
+      const container = document.querySelector(".catalog");
+      if (container) {
+        container.querySelectorAll("pre code").forEach(block => {
+          // Проверяем, что блок еще не подсвечен
+          if (!block.classList.contains("hljs")) {
+            hljs.highlightElement(block);
+          }
+        });
+      }
     }
   }
 

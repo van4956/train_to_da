@@ -2,10 +2,10 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Тренажёр для подготовки к собеседованиям</title>
+  <title>Тренажёр для подготовки к собеседованиям - Интервью</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Вопросы по: ML, SQL, Python, Алгоритмам, Статистике, Теории вероятностей, A/B тестам, Метрикам, Мышлению. Подготовка к собеседованиям на позицию DA / DS / ML." />
+  <meta name="description" content="Вопросы по: AI, ML, SQL, Python, Алгоритмам, Статистике, Теории вероятностей, A/B тестам, Метрикам, Мышлению. Подготовка к собеседованиям на позицию DA / DS / ML." />
 
   <!-- Общие стили -->
   <link rel="stylesheet" href="assets/css/style.css" />
@@ -50,13 +50,13 @@
       </p>
 
       <nav class="header__nav">
-        <a href="index.html" class="nav__link nav__link--active">Каталог</a>
+        <a href="index.html" class="nav__link">Каталог</a>
         <a href="cards.html" class="nav__link">Карточки</a>
         <a href="blitz.html" class="nav__link">Блиц</a>
-        <a href="interview.html" class="nav__link">Интервью</a>
+        <a href="interview.html" class="nav__link nav__link--active">Интервью</a>
       </nav>
 
-      <p class="header__mode-description">Общий просмотр всей Базы. Повторение, чтение, навигация по карточкам. Статичный порядок, два фильтра, поиск по ключевому слову.</p>
+      <p class="header__mode-description">Формат интервью: сформулируй письменный ответ и сравни его с эталоном.</p>
 
     </div>
   </header>
@@ -64,85 +64,72 @@
   <!-- ================= MAIN ================= -->
   <main class="main">
 
-    <!-- ===== ФИЛЬТРЫ ===== -->
-    <section class="filters">
-      <div class="filters__group">
+    <!-- ===== БЛОК ИНТЕРВЬЮ ===== -->
+    <section class="interview-mode">
+      <div class="interview-mode__container">
 
-        <label for="searchInput">Поиск</label>
-        <input type="text" id="searchInput" placeholder="Введите текст для поиска...">
+        <!-- Фильтр "Тема" -->
+        <div class="interview-mode__filter">
+          <label for="interviewTopicFilter">Тема</label>
+          <div class="custom-dropdown" data-select-id="interviewTopicFilter">
+            <select id="interviewTopicFilter" style="display: none;">
+              <option value="all">Все темы</option>
+              <!-- темы подставляются из data.json -->
+            </select>
+            <button type="button" class="custom-dropdown__button" aria-haspopup="listbox">
+              <span class="custom-dropdown__selected">Все темы</span>
+              <svg class="custom-dropdown__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M6 9L1 4h10L6 9z" fill="currentColor"/>
+              </svg>
+            </button>
+            <ul class="custom-dropdown__list" role="listbox"></ul>
+          </div>
+        </div>
 
-      </div>
+        <!-- Карточка интервью -->
+        <div class="interview-mode__card" id="interviewModeCard">
+          <div class="interview-mode__question-section">
+            <div class="interview-mode__label">ВОПРОС</div>
+            <div class="interview-mode__question" id="interviewModeQuestion">
+              <!-- вопрос рендерится JS-ом -->
+            </div>
+          </div>
 
-      <div class="filters__group">
+          <div class="interview-mode__user-answer-section">
+            <div class="interview-mode__label">ВАШ ОТВЕТ</div>
+            <textarea
+              class="interview-mode__textarea"
+              id="interviewModeTextarea"
+              placeholder="Сформулируйте ваш ответ..."
+              rows="8"
+            ></textarea>
+          </div>
 
-        <label for="topicFilter">Тема</label>
-        <div class="custom-dropdown" data-select-id="topicFilter">
-          <select id="topicFilter" style="display: none;">
-            <option value="all">Все темы</option>
-            <!-- темы подставляются из data.json -->
-          </select>
-          <button type="button" class="custom-dropdown__button" aria-haspopup="listbox">
-            <span class="custom-dropdown__selected">Все темы</span>
-            <svg class="custom-dropdown__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M6 9L1 4h10L6 9z" fill="currentColor"/>
-            </svg>
-          </button>
-          <ul class="custom-dropdown__list" role="listbox"></ul>
+          <div class="interview-mode__controls">
+            <button type="button" class="interview-mode__button interview-mode__button--submit" id="interviewModeSubmit">
+              Отправить
+            </button>
+            <button type="button" class="interview-mode__button interview-mode__button--next" id="interviewModeNext">
+              Следующий вопрос
+            </button>
+          </div>
+
+          <!-- Состояние "Проверка..." -->
+          <div class="interview-mode__checking" id="interviewModeChecking">
+            Проверка...
+          </div>
+
+          <!-- Эталонный ответ -->
+          <div class="interview-mode__reference-section" id="interviewModeReference">
+            <div class="interview-mode__label">ЭТАЛОННЫЙ ОТВЕТ</div>
+            <div class="interview-mode__reference-content" id="interviewModeReferenceContent">
+              <!-- эталонный ответ рендерится JS-ом -->
+            </div>
+          </div>
+
         </div>
 
       </div>
-
-      <div class="filters__group">
-
-        <label for="levelFilter">Уровень</label>
-        <div class="custom-dropdown" data-select-id="levelFilter">
-          <select id="levelFilter" style="display: none;">
-            <option value="all">Все уровни</option>
-            <option value="lvl_1">Easy</option>
-            <option value="lvl_2">Medium</option>
-            <option value="lvl_3">Hard</option>
-          </select>
-          <button type="button" class="custom-dropdown__button" aria-haspopup="listbox">
-            <span class="custom-dropdown__selected">Все уровни</span>
-            <svg class="custom-dropdown__arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M6 9L1 4h10L6 9z" fill="currentColor"/>
-            </svg>
-          </button>
-          <ul class="custom-dropdown__list" role="listbox">
-            <li class="custom-dropdown__item" role="option" data-value="all">Все уровни</li>
-            <li class="custom-dropdown__item" role="option" data-value="lvl_1">Easy</li>
-            <li class="custom-dropdown__item" role="option" data-value="lvl_2">Medium</li>
-            <li class="custom-dropdown__item" role="option" data-value="lvl_3">Hard</li>
-          </ul>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ===== СТАТИСТИКА ===== -->
-    <section class="stats">
-      <div class="stats__content">
-        <span class="stats__item stats__count" id="statsCount">0 из 0 карточек</span>
-        <span class="stats__item stats__level" id="lvl1Item">
-          <span id="lvl1Count">0</span> Easy
-        </span>
-        <span class="stats__item stats__level" id="lvl2Item">
-          <span id="lvl2Count">0</span> Medium
-        </span>
-        <span class="stats__item stats__level" id="lvl3Item">
-          <span id="lvl3Count">0</span> Hard
-        </span>
-      </div>
-    </section>
-
-    <!-- ===== СПИСОК КАРТОЧЕК ===== -->
-    <section class="catalog">
-      <!-- карточки рендерятся JS-ом -->
-    </section>
-
-    <!-- ===== СООБЩЕНИЕ О ПУСТОМ РЕЗУЛЬТАТЕ ===== -->
-    <section class="empty-results" id="emptyResults" style="display: none;">
-      <p>Ничего не найдено</p>
     </section>
 
   </main>
@@ -170,7 +157,7 @@
   <!-- ================= SCRIPTS ================= -->
   <script src="assets/js/data.js"></script>
   <script src="assets/js/filters.js"></script>
-  <script src="assets/js/catalog.js"></script>
+  <script src="assets/js/interview.js"></script>
   <script>
     // ОТКЛЮЧЕНО: Режим glassmorphism деактивирован
     // Применяем режим без стекла по умолчанию

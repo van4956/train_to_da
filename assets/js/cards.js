@@ -6,7 +6,8 @@ let availableCards = [];
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     await loadData();
-    initGlassToggle();
+    // initGlassToggle(); // ОТКЛЮЧЕНО: режим стекла деактивирован
+    document.body.classList.add("no-glass"); // Устанавливаем режим без стекла по умолчанию
     initCardsMode();
   } catch (err) {
     console.error(err);
@@ -15,8 +16,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 /**
  * Инициализация переключателя прозрачности
+ * ОТКЛЮЧЕНО: функционал glassmorphism закомментирован
  */
-function initGlassToggle() {
+/* function initGlassToggle() {
   const toggleButton = document.getElementById("glassToggle");
   if (!toggleButton) return;
 
@@ -39,7 +41,7 @@ function initGlassToggle() {
       localStorage.setItem("glassmorphismEnabled", "false");
     }
   });
-}
+} */
 
 /**
  * Инициализация режима карточек
@@ -237,7 +239,10 @@ function renderMarkdown() {
     const cardContainer = document.querySelector(".cards-mode__card");
     if (cardContainer) {
       cardContainer.querySelectorAll("pre code").forEach(block => {
-        hljs.highlightElement(block);
+        // Проверяем, что блок еще не подсвечен
+        if (!block.classList.contains("hljs")) {
+          hljs.highlightElement(block);
+        }
       });
     }
   }

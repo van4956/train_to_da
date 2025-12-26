@@ -1,0 +1,279 @@
+// assets/js/interview.js
+// Режим «Интервью» — формулирование письменного ответа и сравнение с эталоном
+
+let currentCard = null;
+let availableCards = [];
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    await loadData();
+    // initGlassToggle(); // ОТКЛЮЧЕНО: режим стекла деактивирован
+    document.body.classList.add("no-glass"); // Устанавливаем режим без стекла по умолчанию
+    initInterviewMode();
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+/**
+ * Инициализация переключателя прозрачности
+ * ОТКЛЮЧЕНО: функционал glassmorphism закомментирован
+ */
+/* function initGlassToggle() {
+  const toggleButton = document.getElementById("glassToggle");
+  if (!toggleButton) return;
+
+  const savedState = localStorage.getItem("glassmorphismEnabled");
+  const isEnabled = savedState === null ? true : savedState === "true";
+
+  if (!isEnabled) {
+    document.body.classList.add("no-glass");
+  }
+
+  toggleButton.addEventListener("click", () => {
+    const isCurrentlyEnabled = !document.body.classList.contains("no-glass");
+    const newState = !isCurrentlyEnabled;
+
+    if (newState) {
+      document.body.classList.remove("no-glass");
+      localStorage.setItem("glassmorphismEnabled", "true");
+    } else {
+      document.body.classList.add("no-glass");
+      localStorage.setItem("glassmorphismEnabled", "false");
+    }
+  });
+} */
+
+/**
+ * Инициализация режима интервью
+ */
+function initInterviewMode() {
+  initTopicFilter();
+  loadRandomCard();
+  setupButtons();
+}
+
+/**
+ * Инициализация фильтра "Тема"
+ */
+function initTopicFilter() {
+  const topicSelect = document.getElementById("interviewTopicFilter");
+  if (!topicSelect) return;
+
+  // Заполняем список тем (используем функции из filters.js)
+  if (typeof getTopics === "function" && typeof fillTopicOptions === "function") {
+    const topics = getTopics();
+    fillTopicOptions(topicSelect, topics);
+  }
+
+  // Инициализируем кастомный dropdown (используем функцию из filters.js)
+  if (typeof initCustomDropdown === "function") {
+    initCustomDropdown("interviewTopicFilter", topicSelect, () => {
+      // При изменении темы загружаем новую карточку
+      loadRandomCard();
+    });
+  }
+}
+
+/**
+ * Загружает случайную карточку из доступных
+ */
+function loadRandomCard() {
+  const topicSelect = document.getElementById("interviewTopicFilter");
+  if (!topicSelect) return;
+
+  const selectedTopic = topicSelect.value;
+
+  // Фильтруем карточки по теме
+  const allCards = getCards();
+  availableCards = selectedTopic === "all"
+    ? allCards
+    : allCards.filter(card => card.topic === selectedTopic);
+
+  if (availableCards.length === 0) {
+    showEmptyState();
+    return;
+  }
+
+  // Выбираем случайную карточку
+  const randomIndex = Math.floor(Math.random() * availableCards.length);
+  currentCard = availableCards[randomIndex];
+
+  renderCard();
+}
+
+/**
+ * Отображает карточку
+ */
+function renderCard() {
+  if (!currentCard) return;
+
+  const questionEl = document.getElementById("interviewModeQuestion");
+  const referenceContentEl = document.getElementById("interviewModeReferenceContent");
+  const referenceSectionEl = document.getElementById("interviewModeReference");
+  const textareaEl = document.getElementById("interviewModeTextarea");
+  const submitButton = document.getElementById("interviewModeSubmit");
+  const checkingEl = document.getElementById("interviewModeChecking");
+
+  if (!questionEl || !referenceContentEl || !referenceSectionEl || !textareaEl || !submitButton || !checkingEl) return;
+
+  // Рендерим вопрос и эталонный ответ через marked
+  questionEl.innerHTML = marked.parse(currentCard.question);
+  referenceContentEl.innerHTML = marked.parse(currentCard.answer);
+
+  // Сбрасываем состояние
+  textareaEl.value = "";
+  textareaEl.disabled = false;
+  submitButton.disabled = false;
+  submitButton.textContent = "Отправить";
+
+  // Скрываем эталонный ответ и состояние проверки
+  referenceSectionEl.style.display = "none";
+  checkingEl.style.display = "none";
+
+  // Рендерим формулы и markdown после небольшой задержки
+  setTimeout(() => {
+    renderMath();
+    renderMarkdown();
+  }, 0);
+}
+
+/**
+ * Показывает пустое состояние (нет карточек)
+ */
+function showEmptyState() {
+  const questionEl = document.getElementById("interviewModeQuestion");
+  const referenceContentEl = document.getElementById("interviewModeReferenceContent");
+  const referenceSectionEl = document.getElementById("interviewModeReference");
+  const textareaEl = document.getElementById("interviewModeTextarea");
+  const submitButton = document.getElementById("interviewModeSubmit");
+
+  if (questionEl) questionEl.innerHTML = "<p>Нет карточек для выбранной темы</p>";
+  if (referenceContentEl) referenceContentEl.innerHTML = "";
+  if (referenceSectionEl) referenceSectionEl.style.display = "none";
+  if (textareaEl) {
+    textareaEl.value = "";
+    textareaEl.disabled = true;
+  }
+  if (submitButton) submitButton.disabled = true;
+}
+
+/**
+ * Настройка кнопок управления
+ */
+function setupButtons() {
+  const submitButton = document.getElementById("interviewModeSubmit");
+  const nextButton = document.getElementById("interviewModeNext");
+
+  // Кнопка "Отправить"
+  if (submitButton) {
+    submitButton.addEventListener("click", () => {
+      handleSubmit();
+    });
+  }
+
+  // Кнопка "Следующий вопрос"
+  if (nextButton) {
+    nextButton.addEventListener("click", () => {
+      loadRandomCard();
+    });
+  }
+}
+
+/**
+ * Обработка отправки ответа
+ */
+function handleSubmit() {
+  const textareaEl = document.getElementById("interviewModeTextarea");
+  const submitButton = document.getElementById("interviewModeSubmit");
+  const checkingEl = document.getElementById("interviewModeChecking");
+  const referenceSectionEl = document.getElementById("interviewModeReference");
+
+  if (!textareaEl || !submitButton || !checkingEl || !referenceSectionEl) return;
+
+  // Проверяем, что textarea не пустая
+  const userAnswer = textareaEl.value.trim();
+  if (!userAnswer) {
+    return; // Ничего не делаем, если ответ пустой
+  }
+
+  // Блокируем textarea и кнопку
+  textareaEl.disabled = true;
+  submitButton.disabled = true;
+
+  // Показываем состояние "Проверка..."
+  checkingEl.style.display = "block";
+
+  // Имитация проверки (задержка 1.5 сек)
+  setTimeout(() => {
+    // Скрываем "Проверка..."
+    checkingEl.style.display = "none";
+
+    // Показываем эталонный ответ
+    referenceSectionEl.style.display = "block";
+
+    // Рендерим формулы и markdown в эталонном ответе
+    setTimeout(() => {
+      renderMath();
+      renderMarkdown();
+    }, 0);
+  }, 1500);
+}
+
+/**
+ * Рендеринг математических формул
+ */
+function renderMath() {
+  if (typeof renderMathInElement !== "function") return;
+
+  const cardContainer = document.querySelector(".interview-mode__card");
+  if (!cardContainer) return;
+
+  // Рендерим формулы в вопросе
+  const questionEl = document.getElementById("interviewModeQuestion");
+  if (questionEl) {
+    const hasRenderedMath = questionEl.querySelector(".katex");
+    if (!hasRenderedMath) {
+      renderMathInElement(questionEl, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false
+      });
+    }
+  }
+
+  // Рендерим формулы в эталонном ответе (если он отображается)
+  const referenceSectionEl = document.getElementById("interviewModeReference");
+  const referenceContentEl = document.getElementById("interviewModeReferenceContent");
+  if (referenceSectionEl && referenceSectionEl.style.display !== "none" && referenceContentEl) {
+    const hasRenderedMath = referenceContentEl.querySelector(".katex");
+    if (!hasRenderedMath) {
+      renderMathInElement(referenceContentEl, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false
+      });
+    }
+  }
+}
+
+/**
+ * Рендеринг markdown (подсветка кода)
+ */
+function renderMarkdown() {
+  if (typeof hljs !== "undefined") {
+    const cardContainer = document.querySelector(".interview-mode__card");
+    if (cardContainer) {
+      cardContainer.querySelectorAll("pre code").forEach(block => {
+        // Проверяем, что блок еще не подсвечен
+        if (!block.classList.contains("hljs")) {
+          hljs.highlightElement(block);
+        }
+      });
+    }
+  }
+}

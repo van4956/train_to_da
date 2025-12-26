@@ -69,7 +69,7 @@ const FILTERS = {
     const list = dropdownWrapper.querySelector(".custom-dropdown__list");
 
     // Если это dropdown тем, заполняем список из select
-    if (selectId === "topicFilter" || selectId === "cardsTopicFilter" || selectId === "blitzTopicFilter") {
+    if (selectId === "topicFilter" || selectId === "cardsTopicFilter" || selectId === "blitzTopicFilter" || selectId === "interviewTopicFilter") {
       const options = Array.from(selectEl.options);
       list.innerHTML = "";
       options.forEach(option => {
