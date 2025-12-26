@@ -10,9 +10,18 @@
 
   :root {
     --content-max-width: 1100px;
-    --solid-bg-color: rgb(37, 16, 79);
-    --button-primary-color: rgb(83, 32, 147);
-    --border-color: rgb(76, 59, 111);
+    --solid-bg-color: rgb(24, 24, 24); /* цвет фона блоков */
+    --button-primary-color: rgb(24, 24, 24); /* цвет кнопок режимов: "каталога", "карточек", "блиц", "интервью"*/
+    --button-secondary-color: rgb(40, 40, 40); /* цвет фильтров, кнопок "показать ответ", "следующий вопрос" */
+    --border-color: rgb(46, 46, 46); /* цвет границ */
+    --border-primary-color: rgb(46, 46, 46); /* цвет границ для кнопок режимов: "каталога", "карточек", "блиц", "интервью"*/
+    --border-radius: 6px; /* радиус закругления всех элементов */
+    --element-padding: 12px 12px; /* внутренние отступы для фильтров и инфоблока */
+
+    /* Glassmorphism эффекты для hover/active состояний */
+    --glass-hover-bg: rgba(20, 30, 50, 0.15); /* фон при наведении в режиме стекла */
+    --glass-hover-blur: blur(16px) saturate(150%); /* размытие при наведении в режиме стекла */
+    --glass-hover-border: rgba(255, 255, 255, 0.3); /* цвет границы при наведении в режиме стекла */
   }
 
   /* ================= BASE ================= */
@@ -50,7 +59,7 @@
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     padding: 8px;
     cursor: pointer;
     color: #9ca3af;
@@ -61,9 +70,19 @@
   }
 
   .glass-toggle__button:hover {
-    background-color: rgba(86, 31, 151, 0.3);
+    background: var(--glass-hover-bg);
+    backdrop-filter: var(--glass-hover-blur);
+    -webkit-backdrop-filter: var(--glass-hover-blur);
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.18);
+    border-color: var(--glass-hover-border);
+  }
+
+  /* Режим без прозрачности - переключатель */
+  body.no-glass .glass-toggle__button:hover {
+    background: var(--solid-bg-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--border-color);
   }
 
   .glass-toggle__icon {
@@ -92,7 +111,7 @@
 
   .header__title {
     font-size: 36px; /* размер шрифта */
-    letter-spacing: 3px; /* межбуквенное расстояние */
+    letter-spacing: 5px; /* межбуквенное расстояние */
     line-height: 2; /* высота строки */
     margin-bottom: 5px; /* отступ снизу */
   }
@@ -120,19 +139,41 @@
     text-decoration: none;
     color: #9ca3af;
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-primary-color);
     text-align: center;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
   .nav__link:hover {
-    background-color: var(--button-primary-color);
+    background: var(--glass-hover-bg);
+    backdrop-filter: var(--glass-hover-blur);
+    -webkit-backdrop-filter: var(--glass-hover-blur);
+    border-color: var(--glass-hover-border);
     color: #ffffff;
   }
 
   .nav__link--active {
-    background-color: var(--button-primary-color);
+    background: var(--glass-hover-bg);
+    backdrop-filter: var(--glass-hover-blur);
+    -webkit-backdrop-filter: var(--glass-hover-blur);
+    border-color: var(--glass-hover-border);
     color: #ffffff;
+  }
+
+  /* Режим без прозрачности - кнопки режимов */
+  body.no-glass .nav__link:hover {
+    background: var(--button-primary-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--border-primary-color);
+  }
+
+  body.no-glass .nav__link--active {
+    background: var(--button-primary-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--border-primary-color);
   }
 
   .header__links {
@@ -160,7 +201,7 @@
   .filters {
     display: flex;
     gap: 24px;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
 
   .filters__group {
@@ -185,8 +226,8 @@
     -webkit-backdrop-filter: blur(12px) saturate(140%);
     color: #e6e6e6;
     border: 1px solid var(--border-color);
-    padding: 6px 8px;
-    border-radius: 14px;
+    padding: var(--element-padding);
+    border-radius: var(--border-radius);
     font-family: inherit;
     font-size: 14px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
@@ -227,9 +268,9 @@
     -webkit-backdrop-filter: blur(12px) saturate(140%);
     color: #e6e6e6;
     border: 1px solid var(--border-color);
-    padding: 6px 8px;
+    padding: var(--element-padding);
     padding-right: 28px;
-    border-radius: 14px;
+    border-radius: var(--border-radius);
     font-family: inherit;
     font-size: 14px;
     cursor: pointer;
@@ -248,7 +289,18 @@
   }
 
   .custom-dropdown__button:hover {
-    border-color: rgba(255, 255, 255, 0.18);
+    background: var(--glass-hover-bg);
+    backdrop-filter: var(--glass-hover-blur);
+    -webkit-backdrop-filter: var(--glass-hover-blur);
+    border-color: var(--glass-hover-border);
+  }
+
+  /* Режим без прозрачности - кнопка dropdown */
+  body.no-glass .custom-dropdown__button:hover {
+    background: var(--button-secondary-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--border-color);
   }
 
   .custom-dropdown__button:focus {
@@ -285,7 +337,7 @@
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
     border: 1px solid var(--border-color);
-    border-radius: 14px;
+    border-radius: var(--border-radius);
     margin: 0;
     padding: 4px;
     list-style: none;
@@ -317,21 +369,31 @@
     padding: 8px 12px;
     color: #e6e6e6;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     transition: background-color 0.15s ease, color 0.15s ease;
     font-size: 14px;
   }
 
   .custom-dropdown__item:hover,
   .custom-dropdown__item--selected {
-    background: rgba(147, 51, 234, 0.4);
+    background: var(--glass-hover-bg);
+    backdrop-filter: var(--glass-hover-blur);
+    -webkit-backdrop-filter: var(--glass-hover-blur);
     color: #ffffff;
+  }
+
+  /* Режим без прозрачности - элементы dropdown */
+  body.no-glass .custom-dropdown__item:hover,
+  body.no-glass .custom-dropdown__item--selected {
+    background: var(--button-secondary-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   /* ================= STATS ================= */
 
   .stats {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
 
   .stats__content {
@@ -339,8 +401,8 @@
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
     border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 12px 16px;
+    border-radius: var(--border-radius);
+    padding: var(--element-padding);
     font-size: 14px;
     display: flex;
     justify-content: space-between;
@@ -382,7 +444,7 @@
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
     border: 1px solid var(--border-color);
-    border-radius: 14px;
+    border-radius: var(--border-radius);
     padding: 16px;
   }
 
@@ -440,13 +502,27 @@
     background: none;
     border: 1px solid var(--border-color);
     color: #e6e6e6;
-    padding: 6px 12px;
-    border-radius: 6px;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
+    margin-top: 12px;
   }
 
   .card__toggle:hover {
-    background-color: var(--button-primary-color);
+    background: var(--glass-hover-bg);
+    backdrop-filter: var(--glass-hover-blur);
+    -webkit-backdrop-filter: var(--glass-hover-blur);
+    border-color: var(--glass-hover-border);
+  }
+
+  /* Режим без прозрачности - кнопка toggle */
+  body.no-glass .card__toggle:hover {
+    background: var(--button-secondary-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--border-color);
   }
 
   /* ================= EMPTY RESULTS ================= */
@@ -488,7 +564,7 @@
   }
 
   .footer__link:hover {
-    color: rgba(147, 51, 234, 0.8);
+    color: #ffffff;  /* цвет ссылок в самом низу при наведении */
   }
 
   .footer__icon {
@@ -507,7 +583,7 @@
   }
 
   .cards-mode__filter {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
 
   .cards-mode__filter label {
@@ -522,7 +598,7 @@
     backdrop-filter: blur(12px) saturate(140%);
     -webkit-backdrop-filter: blur(12px) saturate(140%);
     border: 1px solid var(--border-color);
-    border-radius: 14px;
+    border-radius: var(--border-radius);
     padding: 32px;
     min-height: 300px;
     display: flex;
@@ -596,7 +672,7 @@
 
   .cards-mode__button {
     padding: 10px 20px;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -616,7 +692,17 @@
   }
 
   .cards-mode__button--show:hover:not(:disabled) {
-    background: var(--button-primary-color);
+    background: var(--glass-hover-bg);
+    backdrop-filter: var(--glass-hover-blur);
+    -webkit-backdrop-filter: var(--glass-hover-blur);
+    border-color: var(--glass-hover-border);
+  }
+
+  /* Режим без прозрачности - кнопка показать */
+  body.no-glass .cards-mode__button--show:hover:not(:disabled) {
+    background: var(--button-secondary-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     border-color: var(--border-color);
   }
 
@@ -627,6 +713,16 @@
   }
 
   .cards-mode__button--next:hover {
-    background: var(--button-primary-color);
+    background: var(--glass-hover-bg);
+    backdrop-filter: var(--glass-hover-blur);
+    -webkit-backdrop-filter: var(--glass-hover-blur);
+    border-color: var(--glass-hover-border);
+  }
+
+  /* Режим без прозрачности - кнопка следующий */
+  body.no-glass .cards-mode__button--next:hover {
+    background: var(--button-secondary-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     border-color: var(--border-color);
   }

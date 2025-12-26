@@ -101,11 +101,14 @@ def build():
 
     cards.sort(key=lambda x: x["id"])
 
+    # Сохраняем порядок тем из Train to DA.md
+    topics_in_order = list(topics_map.keys())
+
     data = {
         "meta": {
             "total_cards": len(cards),
             "levels": sorted({c["level"] for c in cards if c["level"]}),
-            "topics": sorted({c["topic"] for c in cards if c["topic"]}),
+            "topics": topics_in_order,
         },
         "cards": cards,
     }
