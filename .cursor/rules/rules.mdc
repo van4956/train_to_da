@@ -1,0 +1,42 @@
+---
+alwaysApply: true
+---
+
+Use only popular, stable and well-supported libraries. Prefer the Python standard library.
+
+Keep dependencies to a minimum. Do not add a library for trivial tasks.
+
+Use the simplest possible architecture that solves the problem. Avoid unnecessary layers and patterns.
+
+Always follow Python best practices and PEP8 in all code.
+
+Always add type hints for all function and method arguments and return values.
+
+Write Russian docstrings for every module, class, function and important variable.
+
+Add detailed comments for any complex logic, non-trivial loops and calculations. Explain what and why.
+
+Split logic into small, clear functions. Avoid long, monolithic functions.
+
+Do not generate boilerplate or placeholder code. All code must be complete and runnable.
+
+Prefer explicit and readable code over clever one-liners. Readability is more important than brevity.
+
+Avoid magic numbers and strings; use named constants with a short Russian comment.
+
+Use only widely adopted, stable Python versions and language features. Avoid experimental features.
+
+
+When requirements are unclear, choose the simplest reasonable implementation instead of over-engineering.
+
+Explain important design decisions in short Russian comments near the code.
+
+Prefer pure functions where possible; keep side effects explicit.
+
+If performance trade-offs exist, choose clarity first and mention possible optimizations in comments.
+
+Keep modules focused on a single responsibility; avoid mixing unrelated logic in one file.
+
+Use clear, descriptive English names for identifiers; avoid abbreviations except very common ones.
+
+Whenever you show code, include minimal usage examples that can be run as-is.

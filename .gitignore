@@ -1,55 +1,28 @@
-# VSCode
-.vscode/
-*.db
-.pylintrc
-.mypy_cache/
-
-# Byte-compiled / optimized / compiled Python files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Virtual environment directories
-.venv/
+*.so
+.Python
+venv/
 env/
 ENV/
-venv/
-venv.bak/
-env.bak/
-.env
 
-# Editor config files (VS Code, PyCharm, и другие IDE)
-.cursor/
+# Vercel
+.vercel
+
+# Environment variables (НЕ коммитим!)
+.env
+.env.local
+.env.*.local
+
+# IDE
 .vscode/
 .idea/
-*.sublime-project
-*.sublime-workspace
+*.swp
+*.swo
+*~
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# MyPy cache
-.mypy_cache/
-
-# файлы с подсказками
-подсказка.txt
-prompt_config.sh
-prompt_config.txt
-spec.md
-
-# текстовые файлы заметок
-database/
+# OS
+.DS_Store
+Thumbs.db

@@ -1179,6 +1179,52 @@
     font-style: italic;
   }
 
+  /* Результат проверки */
+  .interview-mode__result-section {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .interview-mode__score-block {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .interview-mode__score-value {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    transition: color 0.3s ease;
+  }
+
+  .interview-mode__score-value--high {
+    color: #10b981; /* Зеленый для 8-10 */
+  }
+
+  .interview-mode__score-value--medium {
+    color: #f59e0b; /* Оранжевый для 5-7 */
+  }
+
+  .interview-mode__score-value--low {
+    color: #ef4444; /* Красный для 1-4 */
+  }
+
+  .interview-mode__feedback-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .interview-mode__feedback-content {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #e5e7eb;
+  }
+
   .interview-mode__reference-section {
     display: none;
     margin-top: 8px;

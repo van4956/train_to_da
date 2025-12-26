@@ -111,11 +111,12 @@ function renderCard() {
   const questionEl = document.getElementById("interviewModeQuestion");
   const referenceContentEl = document.getElementById("interviewModeReferenceContent");
   const referenceSectionEl = document.getElementById("interviewModeReference");
+  const resultSectionEl = document.getElementById("interviewModeResult");
   const textareaEl = document.getElementById("interviewModeTextarea");
   const submitButton = document.getElementById("interviewModeSubmit");
   const checkingEl = document.getElementById("interviewModeChecking");
 
-  if (!questionEl || !referenceContentEl || !referenceSectionEl || !textareaEl || !submitButton || !checkingEl) return;
+  if (!questionEl || !referenceContentEl || !referenceSectionEl || !resultSectionEl || !textareaEl || !submitButton || !checkingEl) return;
 
   // Рендерим вопрос и эталонный ответ через marked
   questionEl.innerHTML = marked.parse(currentCard.question);
@@ -127,8 +128,9 @@ function renderCard() {
   submitButton.disabled = false;
   submitButton.textContent = "Отправить";
 
-  // Скрываем эталонный ответ и состояние проверки
+  // Скрываем эталонный ответ, результат и состояние проверки
   referenceSectionEl.style.display = "none";
+  resultSectionEl.style.display = "none";
   checkingEl.style.display = "none";
 
   // Рендерим формулы и markdown после небольшой задержки
@@ -182,14 +184,16 @@ function setupButtons() {
 
 /**
  * Обработка отправки ответа
+ * Отправляет запрос к API для проверки ответа через GPT
  */
-function handleSubmit() {
+async function handleSubmit() {
   const textareaEl = document.getElementById("interviewModeTextarea");
   const submitButton = document.getElementById("interviewModeSubmit");
   const checkingEl = document.getElementById("interviewModeChecking");
+  const resultSectionEl = document.getElementById("interviewModeResult");
   const referenceSectionEl = document.getElementById("interviewModeReference");
 
-  if (!textareaEl || !submitButton || !checkingEl || !referenceSectionEl) return;
+  if (!textareaEl || !submitButton || !checkingEl || !resultSectionEl || !referenceSectionEl) return;
 
   // Проверяем, что textarea не пустая
   const userAnswer = textareaEl.value.trim();
@@ -197,27 +201,119 @@ function handleSubmit() {
     return; // Ничего не делаем, если ответ пустой
   }
 
+  if (!currentCard) return;
+
   // Блокируем textarea и кнопку
   textareaEl.disabled = true;
   submitButton.disabled = true;
 
   // Показываем состояние "Проверка..."
   checkingEl.style.display = "block";
+  resultSectionEl.style.display = "none";
 
-  // Имитация проверки (задержка 1.5 сек)
-  setTimeout(() => {
+  try {
+    // Отправляем запрос к API
+    const response = await fetch('/api/interview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        question: currentCard.question,
+        expected_answer: currentCard.answer,
+        user_answer: userAnswer
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
     // Скрываем "Проверка..."
     checkingEl.style.display = "none";
+
+    // Отображаем результат
+    displayResult(data.score, data.feedback);
 
     // Показываем эталонный ответ
     referenceSectionEl.style.display = "block";
 
-    // Рендерим формулы и markdown в эталонном ответе
+    // Рендерим формулы и markdown
     setTimeout(() => {
       renderMath();
       renderMarkdown();
     }, 0);
-  }, 1500);
+
+  } catch (error) {
+    console.error('Ошибка при проверке ответа:', error);
+
+    // Скрываем "Проверка..."
+    checkingEl.style.display = "none";
+
+    // Показываем сообщение об ошибке
+    displayError('Не удалось проверить ответ. Попробуйте позже.');
+
+    // Показываем эталонный ответ даже при ошибке
+    referenceSectionEl.style.display = "block";
+
+    setTimeout(() => {
+      renderMath();
+      renderMarkdown();
+    }, 0);
+  }
+}
+
+/**
+ * Отображение результата проверки (оценка + фидбек)
+ */
+function displayResult(score, feedback) {
+  const resultSectionEl = document.getElementById("interviewModeResult");
+  const scoreEl = document.getElementById("interviewModeScore");
+  const feedbackEl = document.getElementById("interviewModeFeedback");
+
+  if (!resultSectionEl || !scoreEl || !feedbackEl) return;
+
+  // Устанавливаем оценку
+  scoreEl.textContent = score;
+
+  // Устанавливаем класс цвета в зависимости от оценки
+  scoreEl.className = 'interview-mode__score-value';
+  if (score >= 8) {
+    scoreEl.classList.add('interview-mode__score-value--high');
+  } else if (score >= 5) {
+    scoreEl.classList.add('interview-mode__score-value--medium');
+  } else {
+    scoreEl.classList.add('interview-mode__score-value--low');
+  }
+
+  // Устанавливаем фидбек
+  feedbackEl.textContent = feedback;
+
+  // Показываем блок результата
+  resultSectionEl.style.display = "block";
+}
+
+/**
+ * Отображение ошибки
+ */
+function displayError(message) {
+  const resultSectionEl = document.getElementById("interviewModeResult");
+  const scoreEl = document.getElementById("interviewModeScore");
+  const feedbackEl = document.getElementById("interviewModeFeedback");
+
+  if (!resultSectionEl || !scoreEl || !feedbackEl) return;
+
+  // Скрываем оценку
+  scoreEl.textContent = '—';
+  scoreEl.className = 'interview-mode__score-value';
+
+  // Показываем сообщение об ошибке
+  feedbackEl.textContent = message;
+
+  // Показываем блок результата
+  resultSectionEl.style.display = "block";
 }
 
 /**

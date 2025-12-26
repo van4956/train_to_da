@@ -119,6 +119,20 @@
             Проверка...
           </div>
 
+          <!-- Результат проверки (оценка + фидбек) -->
+          <div class="interview-mode__result-section" id="interviewModeResult">
+            <div class="interview-mode__score-block">
+              <div class="interview-mode__label">ОЦЕНКА</div>
+              <div class="interview-mode__score-value" id="interviewModeScore">—</div>
+            </div>
+            <div class="interview-mode__feedback-block">
+              <div class="interview-mode__label">ФИДБЕК</div>
+              <div class="interview-mode__feedback-content" id="interviewModeFeedback">
+                <!-- фидбек от GPT рендерится JS-ом -->
+              </div>
+            </div>
+          </div>
+
           <!-- Эталонный ответ -->
           <div class="interview-mode__reference-section" id="interviewModeReference">
             <div class="interview-mode__label">ЭТАЛОННЫЙ ОТВЕТ</div>
