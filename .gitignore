@@ -17,12 +17,22 @@ ENV/
 .env.*.local
 
 # IDE
+.cursor/
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.pylintrc
 
 # OS
 .DS_Store
 Thumbs.db
+
+# файлы
+database/
+todo/
+подсказка.txt
+prompt_config.sh
+prompt_config.txt
+spec.md
