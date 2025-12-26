@@ -122,19 +122,20 @@ function renderCard() {
   if (!currentCard) return;
 
   const questionEl = document.getElementById("blitzModeQuestion");
-  const answerEl = document.getElementById("blitzModeAnswer");
+  const answerContentEl = document.getElementById("blitzModeAnswerContent");
+  const answerSectionEl = document.getElementById("blitzModeAnswer");
   const showButton = document.getElementById("blitzModeShowAnswer");
   const knewButton = document.getElementById("blitzModeKnew");
   const didntKnowButton = document.getElementById("blitzModeDidntKnow");
 
-  if (!questionEl || !answerEl || !showButton) return;
+  if (!questionEl || !answerContentEl || !answerSectionEl || !showButton) return;
 
   // Рендерим вопрос и ответ через marked
   questionEl.innerHTML = marked.parse(currentCard.question);
-  answerEl.innerHTML = marked.parse(currentCard.answer);
+  answerContentEl.innerHTML = marked.parse(currentCard.answer);
 
-  // Скрываем ответ изначально
-  answerEl.style.display = "none";
+  // Скрываем всю секцию ответа (включая заголовок "ОТВЕТ") изначально
+  answerSectionEl.style.display = "none";
   showButton.textContent = "Показать ответ";
   showButton.disabled = false;
 
@@ -153,12 +154,13 @@ function renderCard() {
  */
 function showEmptyState() {
   const questionEl = document.getElementById("blitzModeQuestion");
-  const answerEl = document.getElementById("blitzModeAnswer");
+  const answerContentEl = document.getElementById("blitzModeAnswerContent");
+  const answerSectionEl = document.getElementById("blitzModeAnswer");
   const showButton = document.getElementById("blitzModeShowAnswer");
 
   if (questionEl) questionEl.innerHTML = "<p>Нет карточек для выбранной темы</p>";
-  if (answerEl) answerEl.innerHTML = "";
-  if (answerEl) answerEl.style.display = "none";
+  if (answerContentEl) answerContentEl.innerHTML = "";
+  if (answerSectionEl) answerSectionEl.style.display = "none";
   if (showButton) showButton.disabled = true;
 }
 
@@ -174,12 +176,12 @@ function setupButtons() {
   // Кнопка "Показать ответ / Скрыть ответ"
   if (showButton) {
     showButton.addEventListener("click", () => {
-      const answerEl = document.getElementById("blitzModeAnswer");
-      if (!answerEl) return;
+      const answerSectionEl = document.getElementById("blitzModeAnswer");
+      if (!answerSectionEl) return;
 
-      if (answerEl.style.display === "none") {
-        // Показываем ответ
-        answerEl.style.display = "block";
+      if (answerSectionEl.style.display === "none") {
+        // Показываем ответ (вместе с заголовком "ОТВЕТ")
+        answerSectionEl.style.display = "block";
         showButton.textContent = "Скрыть ответ";
 
         // Рендерим формулы в ответе, если они еще не отрендерены
@@ -188,8 +190,8 @@ function setupButtons() {
           renderMarkdown();
         }, 0);
       } else {
-        // Скрываем ответ
-        answerEl.style.display = "none";
+        // Скрываем ответ (вместе с заголовком "ОТВЕТ")
+        answerSectionEl.style.display = "none";
         showButton.textContent = "Показать ответ";
       }
     });
@@ -241,9 +243,9 @@ function setupButtons() {
   if (nextButton) {
     nextButton.addEventListener("click", () => {
       // Скрываем ответ перед загрузкой новой карточки
-      const answerEl = document.getElementById("blitzModeAnswer");
-      if (answerEl) {
-        answerEl.style.display = "none";
+      const answerSectionEl = document.getElementById("blitzModeAnswer");
+      if (answerSectionEl) {
+        answerSectionEl.style.display = "none";
       }
       loadRandomCard();
     });
@@ -303,7 +305,8 @@ function renderMath() {
 
   // Рендерим формулы только в элементах вопроса и ответа
   const questionEl = document.getElementById("blitzModeQuestion");
-  const answerEl = document.getElementById("blitzModeAnswer");
+  const answerSectionEl = document.getElementById("blitzModeAnswer");
+  const answerContentEl = document.getElementById("blitzModeAnswerContent");
 
   if (questionEl) {
     // Проверяем, есть ли уже отрендеренные формулы в вопросе
@@ -319,11 +322,11 @@ function renderMath() {
     }
   }
 
-  if (answerEl && answerEl.style.display !== "none") {
+  if (answerSectionEl && answerSectionEl.style.display !== "none" && answerContentEl) {
     // Проверяем, есть ли уже отрендеренные формулы в ответе
-    const hasRenderedMath = answerEl.querySelector(".katex");
+    const hasRenderedMath = answerContentEl.querySelector(".katex");
     if (!hasRenderedMath) {
-      renderMathInElement(answerEl, {
+      renderMathInElement(answerContentEl, {
         delimiters: [
           { left: "$$", right: "$$", display: true },
           { left: "$", right: "$", display: false }

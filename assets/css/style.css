@@ -620,6 +620,7 @@
   .cards-mode__answer-section {
     flex: 1;
     margin-bottom: 32px;
+    display: none; /* Изначально скрыта вся секция (включая заголовок "ОТВЕТ") */
   }
 
   .cards-mode__label {
@@ -637,11 +638,10 @@
     line-height: 1.6;
   }
 
-  .cards-mode__answer {
+  .cards-mode__answer-content {
     font-size: 16px;
     color: #cbd5e1;
     line-height: 1.6;
-    display: none; /* Изначально скрыт */
   }
 
   /* Стили для списков внутри карточек режима карточек */
@@ -774,6 +774,7 @@
   .blitz-mode__answer-section {
     flex: 1;
     margin-bottom: 32px;
+    display: none; /* Изначально скрыта вся секция (включая заголовок "ОТВЕТ") */
   }
 
   .blitz-mode__label {
@@ -791,11 +792,10 @@
     line-height: 1.6;
   }
 
-  .blitz-mode__answer {
+  .blitz-mode__answer-content {
     font-size: 16px;
     color: #cbd5e1;
     line-height: 1.6;
-    display: none; /* Изначально скрыт */
   }
 
   /* Стили для списков внутри карточек режима блиц */
