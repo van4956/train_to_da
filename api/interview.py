@@ -4,76 +4,70 @@ Serverless функция для проверки ответов пользов�
 
 import json
 import os
+from http.server import BaseHTTPRequestHandler
 from openai import OpenAI
 
 
-def handler(request):
+class handler(BaseHTTPRequestHandler):
     """
-    Обработчик запросов от фронтенда.
-    Принимает вопрос, эталонный ответ и ответ пользователя.
-    Отправляет запрос в OpenAI API и возвращает оценку с фидбеком.
+    Обработчик запросов от фронтенда для Vercel Serverless Functions.
     """
 
-    # CORS headers для всех ответов
-    headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Content-Type': 'application/json'
-    }
+    def _set_headers(self, status_code=200):
+        """Установка CORS заголовков"""
+        self.send_response(status_code)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
 
-    # Обработка preflight запроса (OPTIONS)
-    if request.method == 'OPTIONS':
-        return {
-            'statusCode': 200,
-            'headers': headers,
-            'body': ''
-        }
+    def do_OPTIONS(self):
+        """Обработка preflight запроса"""
+        self._set_headers(200)
+        self.wfile.write(b'')
 
-    # Проверка метода запроса
-    if request.method != 'POST':
-        return {
-            'statusCode': 405,
-            'headers': headers,
-            'body': json.dumps({'error': 'Method Not Allowed'}, ensure_ascii=False)
-        }
+    def do_POST(self):
+        """Обработка POST запроса"""
+        try:
+            # Читаем тело запроса
+            content_length = int(self.headers.get('Content-Length', 0))
+            body_content = self.rfile.read(content_length).decode('utf-8')
 
-    try:
-        # Парсим тело запроса
-        body = json.loads(request.body)
+            print(f"Received body: {body_content}")
+            body = json.loads(body_content)
 
-        question = body.get('question', '').strip()
-        expected_answer = body.get('expected_answer', '').strip()
-        user_answer = body.get('user_answer', '').strip()
+            question = body.get('question', '').strip()
+            expected_answer = body.get('expected_answer', '').strip()
+            user_answer = body.get('user_answer', '').strip()
 
-        # Валидация входных данных
-        if not question or not expected_answer or not user_answer:
-            return {
-                'statusCode': 400,
-                'headers': headers,
-                'body': json.dumps({
+            print(f"Parsed: question={len(question)} chars, expected={len(expected_answer)} chars, user={len(user_answer)} chars")
+
+            # Валидация входных данных
+            if not question or not expected_answer or not user_answer:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({
                     'error': 'Отсутствуют обязательные поля: question, expected_answer, user_answer'
-                }, ensure_ascii=False)
-            }
+                }, ensure_ascii=False).encode('utf-8'))
+                return
 
-        # Получаем настройки из ENV
-        api_key = os.environ.get('OPENAI_API_KEY')
-        model = os.environ.get('OPENAI_MODEL', 'gpt-4o-mini')
+            # Получаем настройки из ENV
+            api_key = os.environ.get('OPENAI_API_KEY')
+            model = os.environ.get('OPENAI_MODEL', 'gpt-4o-mini')
 
-        if not api_key:
-            return {
-                'statusCode': 500,
-                'headers': headers,
-                'body': json.dumps({
+            if not api_key:
+                self._set_headers(500)
+                self.wfile.write(json.dumps({
                     'error': 'API ключ не настроен'
-                }, ensure_ascii=False)
-            }
+                }, ensure_ascii=False).encode('utf-8'))
+                return
 
-        # Инициализируем OpenAI клиент
-        client = OpenAI(api_key=api_key)
+            # Инициализируем OpenAI клиент
+            print(f"Initializing OpenAI with model: {model}")
+            client = OpenAI(api_key=api_key)
 
-        # Формируем промпт для GPT
-        prompt = f"""Ты — опытный интервьюер для позиции Data Analyst / Data Scientist.
+            # Формируем промпт для GPT
+            prompt = f"""Ты — опытный интервьюер для позиции Data Analyst / Data Scientist.
 
 Твоя задача: оценить ответ кандидата на вопрос по шкале от 1 до 10 и дать краткий конструктивный фидбек.
 
@@ -100,65 +94,64 @@ def handler(request):
 
 Не добавляй никаких пояснений вне JSON. Верни только JSON."""
 
-        # Запрос к OpenAI API
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "Ты — профессиональный интервьюер. Отвечай строго в формате JSON."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            temperature=0.7,
-            max_tokens=300,
-            response_format={"type": "json_object"}
-        )
+            # Запрос к OpenAI API
+            print("Sending request to OpenAI...")
+            response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "Ты — профессиональный интервьюер. Отвечай строго в формате JSON."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                temperature=0.7,
+                max_tokens=300,
+                response_format={"type": "json_object"}
+            )
 
-        # Извлекаем ответ
-        result_text = response.choices[0].message.content.strip()
-        result = json.loads(result_text)
+            # Извлекаем ответ
+            result_text = response.choices[0].message.content.strip()
+            print(f"GPT Response: {result_text}")
+            result = json.loads(result_text)
 
-        # Валидация результата
-        score = result.get('score')
-        feedback = result.get('feedback', '')
+            # Валидация результата
+            score = result.get('score')
+            feedback = result.get('feedback', '')
 
-        if not isinstance(score, (int, float)) or not (1 <= score <= 10):
-            raise ValueError('Некорректная оценка от GPT')
+            if not isinstance(score, (int, float)) or not (1 <= score <= 10):
+                raise ValueError('Некорректная оценка от GPT')
 
-        if not feedback:
-            raise ValueError('Пустой фидбек от GPT')
+            if not feedback:
+                raise ValueError('Пустой фидбек от GPT')
 
-        # Возвращаем результат
-        return {
-            'statusCode': 200,
-            'headers': headers,
-            'body': json.dumps({
+            # Возвращаем результат
+            result_data = {
                 'score': int(score),
                 'feedback': feedback
-            }, ensure_ascii=False)
-        }
+            }
+            print(f"Returning: {result_data}")
 
-    except json.JSONDecodeError as e:
-        return {
-            'statusCode': 400,
-            'headers': headers,
-            'body': json.dumps({
+            self._set_headers(200)
+            self.wfile.write(json.dumps(result_data, ensure_ascii=False).encode('utf-8'))
+
+        except json.JSONDecodeError as e:
+            print(f"JSON Error: {str(e)}")
+            self._set_headers(400)
+            self.wfile.write(json.dumps({
                 'error': f'Неверный формат JSON: {str(e)}'
-            }, ensure_ascii=False)
-        }
+            }, ensure_ascii=False).encode('utf-8'))
 
-    except Exception as e:
-        # Логируем ошибку (видно в Vercel Logs)
-        print(f"Error: {str(e)}")
+        except Exception as e:
+            # Логируем ошибку (видно в Vercel Logs)
+            print(f"Error: {str(e)}")
+            import traceback
+            traceback.print_exc()
 
-        return {
-            'statusCode': 500,
-            'headers': headers,
-            'body': json.dumps({
+            self._set_headers(500)
+            self.wfile.write(json.dumps({
                 'error': 'Внутренняя ошибка сервера. Попробуйте позже.'
-            }, ensure_ascii=False)
-        }
+            }, ensure_ascii=False).encode('utf-8'))

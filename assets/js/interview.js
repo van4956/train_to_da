@@ -213,6 +213,7 @@ async function handleSubmit() {
 
   try {
     // Отправляем запрос к API
+    console.log('Отправка запроса к /api/interview...');
     const response = await fetch('/api/interview', {
       method: 'POST',
       headers: {
@@ -225,11 +226,16 @@ async function handleSubmit() {
       })
     });
 
+    console.log('Response status:', response.status);
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('API Error:', errorText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
+    console.log('API Response:', data);
 
     // Скрываем "Проверка..."
     checkingEl.style.display = "none";
