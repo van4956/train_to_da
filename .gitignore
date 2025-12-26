@@ -15,6 +15,7 @@ ENV/
 .env
 .env.local
 .env.*.local
+.env_example
 
 # IDE
 .cursor/
@@ -36,3 +37,5 @@ todo/
 prompt_config.sh
 prompt_config.txt
 spec.md
+
+.gitattributes
