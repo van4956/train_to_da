@@ -184,20 +184,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function updateStats(cards) {
-    const statsCountEl = document.getElementById("statsCount");
+    const statsCountActiveEl = document.getElementById("statsCountActive");
+    const statsCountTotalEl = document.getElementById("statsCountTotal");
     const lvl1El = document.getElementById("lvl1Count");
     const lvl2El = document.getElementById("lvl2Count");
     const lvl3El = document.getElementById("lvl3Count");
 
-    if (!statsCountEl) return;
+    if (!statsCountActiveEl || !statsCountTotalEl) return;
 
     // Получаем общее количество карточек в базе
     const allCards = getCards();
     const totalInBase = allCards.length;
     const filteredCount = cards.length;
 
-    // Обновляем "X из Y карточек"
-    statsCountEl.textContent = `${filteredCount} из ${totalInBase} карточек`;
+    // Обновляем "X" и "из Y карточек" раздельно
+    statsCountActiveEl.textContent = filteredCount;
+    statsCountTotalEl.textContent = `из ${totalInBase} карточек`;
 
     // Обновляем счётчики по уровням (только среди отфильтрованных)
     if (lvl1El) lvl1El.textContent = cards.filter(c => c.level === "lvl_1").length;

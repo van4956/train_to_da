@@ -4,6 +4,10 @@
 let currentCard = null;
 let availableCards = [];
 
+// Счетчики для статистики интервью
+let answeredQuestionsCount = 1; // Начинается с 1, увеличивается после каждого "Отправить"
+let totalScore = 0; // Сумма всех оценок для расчета средней
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     await loadData();
@@ -108,6 +112,7 @@ function loadRandomCard() {
 function renderCard() {
   if (!currentCard) return;
 
+  const questionLabelEl = document.getElementById("interviewModeQuestionLabel");
   const questionEl = document.getElementById("interviewModeQuestion");
   const referenceContentEl = document.getElementById("interviewModeReferenceContent");
   const referenceSectionEl = document.getElementById("interviewModeReference");
@@ -116,7 +121,10 @@ function renderCard() {
   const submitButton = document.getElementById("interviewModeSubmit");
   const checkingEl = document.getElementById("interviewModeChecking");
 
-  if (!questionEl || !referenceContentEl || !referenceSectionEl || !resultSectionEl || !textareaEl || !submitButton || !checkingEl) return;
+  if (!questionLabelEl || !questionEl || !referenceContentEl || !referenceSectionEl || !resultSectionEl || !textareaEl || !submitButton || !checkingEl) return;
+
+  // Обновляем заголовок с номером вопроса
+  questionLabelEl.textContent = `ВОПРОС ${answeredQuestionsCount}`;
 
   // Рендерим вопрос и эталонный ответ через marked
   questionEl.innerHTML = marked.parse(currentCard.question);
@@ -298,7 +306,13 @@ function displayResult(score, feedback) {
   feedbackEl.textContent = feedback;
 
   // Показываем блок результата
-  resultSectionEl.style.display = "block";
+  resultSectionEl.style.display = "flex"; // Важно: flex, чтобы gap работал!
+
+  // Обновляем статистику
+  totalScore += score; // Суммируем оценки
+  answeredQuestionsCount++; // Увеличиваем счетчик отвеченных вопросов
+
+  console.log(`Статистика: отвечено вопросов = ${answeredQuestionsCount - 1}, сумма оценок = ${totalScore}, средняя оценка = ${(totalScore / (answeredQuestionsCount - 1)).toFixed(2)}`);
 }
 
 /**
@@ -311,15 +325,21 @@ function displayError(message) {
 
   if (!resultSectionEl || !scoreEl || !feedbackEl) return;
 
-  // Скрываем оценку
-  scoreEl.textContent = '—';
-  scoreEl.className = 'interview-mode__score-value';
+  // Устанавливаем оценку 0 при ошибке
+  scoreEl.textContent = '0';
+  scoreEl.className = 'interview-mode__score-value interview-mode__score-value--zero'; // Белый цвет для 0
 
   // Показываем сообщение об ошибке
   feedbackEl.textContent = message;
 
   // Показываем блок результата
-  resultSectionEl.style.display = "block";
+  resultSectionEl.style.display = "flex"; // Важно: flex, чтобы gap работал!
+
+  // Обновляем статистику (даже при ошибке)
+  totalScore += 0; // Добавляем 0 к сумме оценок
+  answeredQuestionsCount++; // Увеличиваем счетчик отвеченных вопросов
+
+  console.log(`Статистика (ошибка): отвечено вопросов = ${answeredQuestionsCount - 1}, сумма оценок = ${totalScore}, средняя оценка = ${(totalScore / (answeredQuestionsCount - 1)).toFixed(2)}`);
 }
 
 /**

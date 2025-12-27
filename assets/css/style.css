@@ -11,11 +11,11 @@
   :root {
     --content-max-width: 1100px;
     --solid-bg-color: rgb(24, 24, 24); /* цвет фона блоков */
-    --button-primary-color: rgb(46, 46, 46); /* цвет кнопок режимов в активном состоянии и при наведении (режим без стекла) */
+    --button-primary-color: rgb(76, 76, 76); /* цвет кнопок режимов в активном состоянии и при наведении (режим без стекла) */
     --button-primary-color-background: rgb(24, 24, 24); /* цвет фона кнопок режимов в базовом состоянии */
-    --button-secondary-color: rgb(46, 46, 46); /* цвет фильтров, кнопок "показать ответ", "следующий вопрос" */
-    --border-color: rgb(46, 46, 46); /* цвет границ */
-    --border-primary-color: rgb(46, 46, 46); /* цвет границ для кнопок режимов: "каталога", "карточек", "блиц", "интервью"*/
+    --button-secondary-color: rgb(76, 76, 76); /* цвет фильтров, кнопок "показать ответ", "следующий вопрос" */
+    --border-color: rgb(76, 76, 76); /* цвет границ */
+    --border-primary-color: rgb(76, 76, 76); /* цвет границ для кнопок режимов: "каталога", "карточек", "блиц", "интервью"*/
     --border-radius: 6px; /* радиус закругления всех элементов */
     --element-padding: 12px 12px; /* внутренние отступы для фильтров и инфоблока */
 
@@ -39,7 +39,7 @@
 
     /* ФОН-КАРТИНКА (по желанию) */
 
-    background-image: url("../icons/image_9.jpg");
+    background-image: url("../icons/image_10.jpg");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -102,7 +102,7 @@
   /* ================= HEADER ================= */
 
   .header {
-    border-bottom: 1px solid var(--border-color);
+    /* border-bottom: 1px solid var(--border-color); */ /* Убрана разделительная линия после заголовка */
   }
 
   .header__content {
@@ -114,7 +114,7 @@
 
   .header__title {
     font-size: 36px; /* размер шрифта */
-    letter-spacing: 5px; /* межбуквенное расстояние */
+    letter-spacing: 4px; /* межбуквенное расстояние */
     line-height: 2; /* высота строки */
     margin-bottom: 5px; /* отступ снизу */
   }
@@ -293,24 +293,24 @@
   }
 
   .custom-dropdown__button:hover {
-    background: var(--glass-hover-bg);
-    backdrop-filter: var(--glass-hover-blur);
-    -webkit-backdrop-filter: var(--glass-hover-blur);
-    border-color: var(--glass-hover-border);
+    /* background: var(--glass-hover-bg); */ /* Убрана подсветка фона при наведении */
+    /* backdrop-filter: var(--glass-hover-blur); */
+    /* -webkit-backdrop-filter: var(--glass-hover-blur); */
+    /* border-color: var(--glass-hover-border); */ /* Убрана подсветка границы */
   }
 
   /* Режим без прозрачности - кнопка dropdown */
   body.no-glass .custom-dropdown__button:hover {
-    background: var(--button-secondary-color);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border-color: var(--border-color);
+    /* background: var(--button-secondary-color); */ /* Убрана подсветка фона при наведении */
+    /* backdrop-filter: none; */
+    /* -webkit-backdrop-filter: none; */
+    /* border-color: var(--border-color); */ /* Граница остаётся без изменений */
   }
 
   .custom-dropdown__button:focus {
     outline: none;
-    border-color: rgba(147, 51, 234, 0.5);
-    box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+    /* border-color: rgba(147, 51, 234, 0.5); */ /* Убрана фиолетовая граница */
+    /* box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1); */ /* Убрано фиолетовое свечение */
   }
 
   .custom-dropdown__selected {
@@ -429,6 +429,15 @@
     color: #e6e6e6;
   }
 
+  /* Разделение счётчика на активное число и общую строку */
+  .stats__count-active {
+    color: #e6e6e6; /* Яркий белый - активное число */
+  }
+
+  .stats__count-total {
+    color: #9ca3af; /* Приглушенный серый - как у уровней */
+  }
+
   .stats__level {
     color: #9ca3af;
   }
@@ -543,7 +552,7 @@
   .footer {
     margin-top: 64px;
     padding: 32px 24px;
-    border-top: 1px solid var(--border-color);
+    /* border-top: 1px solid var(--border-color); */ /* Убрана разделительная линия перед подвалом */
   }
 
   .footer__content {
@@ -604,7 +613,7 @@
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 32px;
-    min-height: 300px;
+    min-height: 450px; /* Увеличено в 1.5 раза (было 300px) */
     display: flex;
     flex-direction: column;
     /* Высота будет автоматически увеличиваться при показе ответа */
@@ -618,7 +627,7 @@
   }
 
   .cards-mode__question-section {
-    margin-bottom: 32px;
+    margin-bottom: 48px; /* Увеличено с 32px (добавлено 50% для увеличения высоты карточки) */
   }
 
   .cards-mode__answer-section {
@@ -759,7 +768,7 @@
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 32px;
-    min-height: 300px;
+    min-height: 450px; /* Увеличено в 1.5 раза (было 300px) */
     display: flex;
     flex-direction: column;
   }
@@ -772,7 +781,7 @@
   }
 
   .blitz-mode__question-section {
-    margin-bottom: 32px;
+    margin-bottom: 48px; /* Увеличено с 32px (добавлено 50% для увеличения высоты карточки) */
   }
 
   .blitz-mode__answer-section {
@@ -900,7 +909,7 @@
 
   /* Статистика сессии */
   .blitz-mode__stats {
-    padding-top: 16px;
+    /* padding-top: 16px; */ /* Убран отступ сверху - теперь расстояние задается через margin-bottom заголовка (12px, как у "ВОПРОС") */
     font-size: 14px;
     color: #9ca3af;
     text-align: left;
@@ -908,7 +917,7 @@
 
   .blitz-mode__stats span {
     color: #e6e6e6;
-    font-weight: 500;
+    /* font-weight: 500; */ /* Убрана жирность цифр */
   }
 
   /* ================= БЛОКИ КОДА (CODE BLOCKS) ================= */
@@ -1074,22 +1083,22 @@
     max-height: 400px;
     padding: 12px;
     border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    background: rgba(20, 30, 50, 0.35);
-    backdrop-filter: blur(8px) saturate(120%);
-    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    border: none; /* Убрана обводка */
+    background: rgb(38, 38, 38); /* Фон изменён на rgb(38, 38, 38) */
+    /* backdrop-filter: blur(8px) saturate(120%); */
+    /* -webkit-backdrop-filter: blur(8px) saturate(120%); */
     color: #e6e6e6;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
     font-size: 15px;
     line-height: 1.6;
     resize: vertical;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    /* transition: border-color 0.2s ease, box-shadow 0.2s ease; */ /* Убрана анимация подсветки */
   }
 
   .interview-mode__textarea:focus {
-    outline: none;
-    border-color: var(--glass-hover-border);
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+    outline: none; /* Убрана стандартная подсветка браузера */
+    /* border-color: var(--glass-hover-border); */ /* Убрана подсветка границы */
+    /* box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1); */ /* Убрана подсветка тенью */
   }
 
   .interview-mode__textarea:disabled {
@@ -1103,7 +1112,7 @@
 
   /* Режим без прозрачности - textarea */
   body.no-glass .interview-mode__textarea {
-    background: var(--button-secondary-color);
+    background: rgb(38, 38, 38); /* Фон остаётся rgb(38, 38, 38) в обоих режимах */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -1183,19 +1192,20 @@
   .interview-mode__result-section {
     display: none;
     flex-direction: column;
-    gap: 16px;
+    gap: 42px; /* Увеличен отступ между блоками ОЦЕНКА и ФИДБЕК (было 16px) */
     padding-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    /* border-top: 1px solid rgba(255, 255, 255, 0.1); */ /* Убрана разделительная линия в режиме интервью */
   }
 
   .interview-mode__score-block {
     display: flex;
-    align-items: center;
-    gap: 16px;
+    flex-direction: column; /* Оценка располагается вертикально (заголовок сверху, цифра снизу) */
+    align-items: flex-start; /* Выравнивание по левому краю */
+    gap: 1px; /* Увеличен отступ между заголовком ОЦЕНКА и цифрой */
   }
 
   .interview-mode__score-value {
-    font-size: 48px;
+    font-size: 36px; /* Уменьшен размер с 48px */
     font-weight: 700;
     line-height: 1;
     transition: color 0.3s ease;
@@ -1213,6 +1223,10 @@
     color: #ef4444; /* Красный для 1-4 */
   }
 
+  .interview-mode__score-value--zero {
+    color: #e6e6e6; /* Белый для 0 (ошибка API) */
+  }
+
   .interview-mode__feedback-block {
     display: flex;
     flex-direction: column;
@@ -1226,7 +1240,7 @@
   }
 
   .interview-mode__reference-section {
-    display: none;
+    display: none !important; /* Всегда скрыт (эталонный ответ не показываем) */
     margin-top: 8px;
   }
 
