@@ -13,6 +13,8 @@
     --solid-bg-color: rgb(24, 24, 24);
     --button-primary-color: rgb(76, 76, 76);
     --button-primary-color-background: rgb(24, 24, 24);
+    --button-blitz-know-green: rgb(66, 145, 66);
+    --button-blitz-not-know-red: rgb(216, 88, 88);
     --button-secondary-color: rgb(76, 76, 76);
     --border-color: rgb(76, 76, 76);
     --border-primary-color: rgb(76, 76, 76);
@@ -664,16 +666,26 @@
   }
 
   /* Кнопки оценки "Знал" / "Не знал" */
-  .blitz-mode__button--knew:hover:not(:disabled),
+  .blitz-mode__button--knew:hover:not(:disabled) {
+    background: var(--button-blitz-know-green);
+    border-color: var(--button-blitz-know-green);
+  }
+
   .blitz-mode__button--didnt-know:hover:not(:disabled) {
-    background: var(--button-secondary-color);
-    border-color: var(--border-color);
+    background: var(--button-blitz-not-know-red);
+    border-color: var(--button-blitz-not-know-red);
   }
 
   /* Активное состояние кнопок оценки (после нажатия) */
-  .blitz-mode__button--active {
-    background: var(--button-secondary-color);
-    border-color: var(--border-color);
+  .blitz-mode__button--knew.blitz-mode__button--active {
+    background: var(--button-blitz-know-green);
+    border-color: var(--button-blitz-know-green);
+    /* Цвет текста остаётся прежним (#e6e6e6) */
+  }
+
+  .blitz-mode__button--didnt-know.blitz-mode__button--active {
+    background: var(--button-blitz-not-know-red);
+    border-color: var(--button-blitz-not-know-red);
     /* Цвет текста остаётся прежним (#e6e6e6) */
   }
 
