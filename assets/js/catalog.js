@@ -6,45 +6,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       initFilters({
         onChange: () => renderCatalog(),
       });
-      // initGlassToggle(); // ОТКЛЮЧЕНО: режим стекла деактивирован
-      document.body.classList.add("no-glass"); // Устанавливаем режим без стекла по умолчанию
       renderCatalog();
     } catch (err) {
       console.error(err);
     }
   });
-
-  /**
-   * Инициализация переключателя прозрачности
-   * ОТКЛЮЧЕНО: функционал glassmorphism закомментирован
-   */
-  /* function initGlassToggle() {
-    const toggleButton = document.getElementById("glassToggle");
-    if (!toggleButton) return;
-
-    // Загружаем сохранённое состояние из localStorage
-    const savedState = localStorage.getItem("glassmorphismEnabled");
-    const isEnabled = savedState === null ? true : savedState === "true";
-
-    // Применяем начальное состояние
-    if (!isEnabled) {
-      document.body.classList.add("no-glass");
-    }
-
-    // Обработчик клика
-    toggleButton.addEventListener("click", () => {
-      const isCurrentlyEnabled = !document.body.classList.contains("no-glass");
-      const newState = !isCurrentlyEnabled;
-
-      if (newState) {
-        document.body.classList.remove("no-glass");
-        localStorage.setItem("glassmorphismEnabled", "true");
-      } else {
-        document.body.classList.add("no-glass");
-        localStorage.setItem("glassmorphismEnabled", "false");
-      }
-    });
-  } */
 
   function renderMath() {
     if (typeof renderMathInElement !== "function") return;

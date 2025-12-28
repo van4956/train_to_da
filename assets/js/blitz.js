@@ -18,42 +18,11 @@ let currentQuestionRated = false; // Был ли оценен текущий в�
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     await loadData();
-    // initGlassToggle(); // ОТКЛЮЧЕНО: режим стекла деактивирован
-    document.body.classList.add("no-glass"); // Устанавливаем режим без стекла по умолчанию
     initBlitzMode();
   } catch (err) {
     console.error(err);
   }
 });
-
-/**
- * Инициализация переключателя прозрачности
- * ОТКЛЮЧЕНО: функционал glassmorphism закомментирован
- */
-/* function initGlassToggle() {
-  const toggleButton = document.getElementById("glassToggle");
-  if (!toggleButton) return;
-
-  const savedState = localStorage.getItem("glassmorphismEnabled");
-  const isEnabled = savedState === null ? true : savedState === "true";
-
-  if (!isEnabled) {
-    document.body.classList.add("no-glass");
-  }
-
-  toggleButton.addEventListener("click", () => {
-    const isCurrentlyEnabled = !document.body.classList.contains("no-glass");
-    const newState = !isCurrentlyEnabled;
-
-    if (newState) {
-      document.body.classList.remove("no-glass");
-      localStorage.setItem("glassmorphismEnabled", "true");
-    } else {
-      document.body.classList.add("no-glass");
-      localStorage.setItem("glassmorphismEnabled", "false");
-    }
-  });
-} */
 
 /**
  * Инициализация режима блиц

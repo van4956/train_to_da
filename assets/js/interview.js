@@ -8,45 +8,18 @@ let availableCards = [];
 let answeredQuestionsCount = 1; // Начинается с 1, увеличивается после каждого "Отправить"
 let totalScore = 0; // Сумма всех оценок для расчета средней
 
+// Состояние интервью
+let isInterviewFinished = false; // Флаг завершения интервью
+let actualAnsweredCount = 0; // Фактическое количество отвеченных вопросов (с полученной оценкой)
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     await loadData();
-    // initGlassToggle(); // ОТКЛЮЧЕНО: режим стекла деактивирован
-    document.body.classList.add("no-glass"); // Устанавливаем режим без стекла по умолчанию
     initInterviewMode();
   } catch (err) {
     console.error(err);
   }
 });
-
-/**
- * Инициализация переключателя прозрачности
- * ОТКЛЮЧЕНО: функционал glassmorphism закомментирован
- */
-/* function initGlassToggle() {
-  const toggleButton = document.getElementById("glassToggle");
-  if (!toggleButton) return;
-
-  const savedState = localStorage.getItem("glassmorphismEnabled");
-  const isEnabled = savedState === null ? true : savedState === "true";
-
-  if (!isEnabled) {
-    document.body.classList.add("no-glass");
-  }
-
-  toggleButton.addEventListener("click", () => {
-    const isCurrentlyEnabled = !document.body.classList.contains("no-glass");
-    const newState = !isCurrentlyEnabled;
-
-    if (newState) {
-      document.body.classList.remove("no-glass");
-      localStorage.setItem("glassmorphismEnabled", "true");
-    } else {
-      document.body.classList.add("no-glass");
-      localStorage.setItem("glassmorphismEnabled", "false");
-    }
-  });
-} */
 
 /**
  * Инициализация режима интервью
@@ -130,11 +103,13 @@ function renderCard() {
   questionEl.innerHTML = marked.parse(currentCard.question);
   referenceContentEl.innerHTML = marked.parse(currentCard.answer);
 
-  // Сбрасываем состояние
-  textareaEl.value = "";
-  textareaEl.disabled = false;
-  submitButton.disabled = false;
-  submitButton.textContent = "Отправить";
+  // Сбрасываем состояние (но только если интервью не завершено)
+  if (!isInterviewFinished) {
+    textareaEl.value = "";
+    textareaEl.disabled = false;
+    submitButton.disabled = false;
+    submitButton.textContent = "Отправить";
+  }
 
   // Скрываем эталонный ответ, результат и состояние проверки
   referenceSectionEl.style.display = "none";
@@ -174,6 +149,7 @@ function showEmptyState() {
 function setupButtons() {
   const submitButton = document.getElementById("interviewModeSubmit");
   const nextButton = document.getElementById("interviewModeNext");
+  const finishButton = document.getElementById("interviewModeFinish");
 
   // Кнопка "Отправить"
   if (submitButton) {
@@ -186,6 +162,13 @@ function setupButtons() {
   if (nextButton) {
     nextButton.addEventListener("click", () => {
       loadRandomCard();
+    });
+  }
+
+  // Кнопка "Завершить интервью" / "Новое интервью"
+  if (finishButton) {
+    finishButton.addEventListener("click", () => {
+      handleFinishInterview();
     });
   }
 }
@@ -310,9 +293,10 @@ function displayResult(score, feedback) {
 
   // Обновляем статистику
   totalScore += score; // Суммируем оценки
-  answeredQuestionsCount++; // Увеличиваем счетчик отвеченных вопросов
+  actualAnsweredCount++; // Увеличиваем фактический счётчик отвеченных вопросов
+  answeredQuestionsCount++; // Увеличиваем счетчик для следующего вопроса
 
-  console.log(`Статистика: отвечено вопросов = ${answeredQuestionsCount - 1}, сумма оценок = ${totalScore}, средняя оценка = ${(totalScore / (answeredQuestionsCount - 1)).toFixed(2)}`);
+  console.log(`✅ displayResult: actualAnsweredCount = ${actualAnsweredCount} (увеличился), totalScore = ${totalScore}, средняя = ${(totalScore / actualAnsweredCount).toFixed(1)}`);
 }
 
 /**
@@ -337,9 +321,10 @@ function displayError(message) {
 
   // Обновляем статистику (даже при ошибке)
   totalScore += 0; // Добавляем 0 к сумме оценок
+  actualAnsweredCount++; // Увеличиваем фактический счётчик (даже при ошибке, т.к. пользователь отправил ответ)
   answeredQuestionsCount++; // Увеличиваем счетчик отвеченных вопросов
 
-  console.log(`Статистика (ошибка): отвечено вопросов = ${answeredQuestionsCount - 1}, сумма оценок = ${totalScore}, средняя оценка = ${(totalScore / (answeredQuestionsCount - 1)).toFixed(2)}`);
+  console.log(`⚠️ displayError: actualAnsweredCount = ${actualAnsweredCount} (увеличился), totalScore = ${totalScore}, средняя = ${(totalScore / actualAnsweredCount).toFixed(1)}`);
 }
 
 /**
@@ -398,4 +383,143 @@ function renderMarkdown() {
       });
     }
   }
+}
+
+/**
+ * Обработка нажатия на кнопку "Завершить интервью" / "Новое интервью"
+ */
+function handleFinishInterview() {
+  const finishButton = document.getElementById("interviewModeFinish");
+  if (!finishButton) return;
+
+  if (isInterviewFinished) {
+    // Если интервью уже завершено, начинаем новое
+    startNewInterview();
+  } else {
+    // Завершаем текущее интервью
+    finishInterview();
+  }
+}
+
+/**
+ * Завершение интервью
+ */
+function finishInterview() {
+  const submitButton = document.getElementById("interviewModeSubmit");
+  const nextButton = document.getElementById("interviewModeNext");
+  const finishButton = document.getElementById("interviewModeFinish");
+  const scoreEl = document.getElementById("interviewModeScore");
+  const feedbackEl = document.getElementById("interviewModeFeedback");
+  const resultSectionEl = document.getElementById("interviewModeResult");
+
+  if (!submitButton || !nextButton || !finishButton || !scoreEl || !feedbackEl || !resultSectionEl) return;
+
+  // Вычисляем среднюю оценку
+  const averageScore = actualAnsweredCount > 0 ? totalScore / actualAnsweredCount : 0;
+  const roundedScore = averageScore.toFixed(1);
+
+  // Формируем вердикт
+  let verdict = "";
+
+  console.log(`DEBUG: actualAnsweredCount = ${actualAnsweredCount}, averageScore = ${averageScore}, roundedScore = ${roundedScore}`);
+
+  if (actualAnsweredCount < 5) {
+    verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Вы не прошли интервью. Нужно ответить на минимум 5 вопросов.`;
+  } else {
+    if (averageScore >= 0 && averageScore < 5) {
+      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью! Ваша оценка ${roundedScore}. Вы не прошли.`;
+    } else if (averageScore >= 5 && averageScore < 7) {
+      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью! Ваша оценка ${roundedScore}, не плохо. Мы вам перезвоним.`;
+    } else if (averageScore >= 7 && averageScore < 9) {
+      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью. Ваша оценка ${roundedScore}, это впечатляет. Очень хорошо!`;
+    } else { // >= 9
+      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью. Ваша оценка ${roundedScore}, это отличный результат. Поздравляем, вы прошли интервью!`;
+    }
+  }
+
+  // Обновляем оценку на среднюю
+  scoreEl.textContent = roundedScore;
+
+  // Обновляем цвет оценки
+  scoreEl.className = 'interview-mode__score-value';
+  if (roundedScore === '0.0') {
+    scoreEl.classList.add('interview-mode__score-value--zero'); // Белый цвет для 0.0
+  } else if (averageScore >= 8) {
+    scoreEl.classList.add('interview-mode__score-value--high');
+  } else if (averageScore >= 5) {
+    scoreEl.classList.add('interview-mode__score-value--medium');
+  } else {
+    scoreEl.classList.add('interview-mode__score-value--low');
+  }
+
+  // Обновляем фидбек
+  feedbackEl.textContent = verdict;
+
+  // Показываем блок результата (если скрыт)
+  resultSectionEl.style.display = "flex";
+
+  // Блокируем кнопки
+  submitButton.disabled = true;
+  nextButton.disabled = true;
+
+  // Меняем кнопку "Завершить интервью" на "Новое интервью"
+  finishButton.textContent = "Новое интервью";
+
+  // Устанавливаем флаг завершения
+  isInterviewFinished = true;
+
+  console.log(`Интервью завершено. Отвечено ${actualAnsweredCount} вопросов. Средняя оценка: ${roundedScore}`);
+}
+
+/**
+ * Начало нового интервью
+ */
+function startNewInterview() {
+  const submitButton = document.getElementById("interviewModeSubmit");
+  const nextButton = document.getElementById("interviewModeNext");
+  const finishButton = document.getElementById("interviewModeFinish");
+  const resultSectionEl = document.getElementById("interviewModeResult");
+  const referenceSectionEl = document.getElementById("interviewModeReference");
+  const textareaEl = document.getElementById("interviewModeTextarea");
+
+  if (!submitButton || !nextButton || !finishButton || !resultSectionEl || !referenceSectionEl || !textareaEl) return;
+
+  // Сбрасываем счётчики и статистику
+  answeredQuestionsCount = 1;
+  totalScore = 0;
+  actualAnsweredCount = 0;
+  isInterviewFinished = false;
+
+  // Разблокируем кнопки
+  submitButton.disabled = false;
+  nextButton.disabled = false;
+
+  // Меняем кнопку обратно на "Завершить интервью"
+  finishButton.textContent = "Завершить интервью";
+
+  // Скрываем блоки результата и эталонного ответа
+  resultSectionEl.style.display = "none";
+  referenceSectionEl.style.display = "none";
+
+  // Очищаем textarea
+  textareaEl.value = "";
+  textareaEl.disabled = false;
+
+  // Загружаем новый вопрос
+  loadRandomCard();
+
+  console.log("Начато новое интервью");
+}
+
+/**
+ * Вспомогательная функция для склонения слова "вопрос"
+ */
+function getQuestionWord(count) {
+  const cases = [2, 0, 1, 1, 1, 2];
+  const titles = ["вопрос", "вопроса", "вопросов"];
+  return titles[
+    count % 100 > 4 && count % 100 < 20
+      ? 2
+      : cases[count % 10 < 5 ? count % 10 : 5]
+  ];
 }
