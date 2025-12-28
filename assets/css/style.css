@@ -250,8 +250,8 @@
 
   .filters__group input:focus {
     outline: none;
-    border-color: rgba(147, 51, 234, 0.5);
-    box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+    border-color: var(--border-color);
+    box-shadow: none;
   }
 
   .filters__group input::placeholder {
@@ -1316,4 +1316,138 @@
 
   .interview-mode__textarea::-webkit-scrollbar-thumb:hover {
     background: #6b7280;
+  }
+
+  /* ================= MOBILE WARNING MODAL ================= */
+
+  .mobile-modal {
+    display: none; /* Скрыт по умолчанию */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  .mobile-modal.mobile-modal--visible {
+    display: flex;
+  }
+
+  .mobile-modal__content {
+    background: rgba(20, 30, 50, 0.95);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    width: 100%;
+    max-width: 420px;
+    padding: 32px 24px;
+    color: #e6e6e6;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    margin: 0 auto;
+  }
+
+  /* Режим без прозрачности - модалка */
+  body.no-glass .mobile-modal__content {
+    background: var(--solid-bg-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .mobile-modal__title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #ffffff;
+    line-height: 1.3;
+  }
+
+  .mobile-modal__text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #d1d5db;
+    margin-bottom: 24px;
+  }
+
+  .mobile-modal__text p {
+    margin-bottom: 12px;
+  }
+
+  .mobile-modal__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .mobile-modal__text strong {
+    color: #e6e6e6;
+    font-weight: 600;
+  }
+
+  .mobile-modal__buttons {
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+  }
+
+  .mobile-modal__button {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    background: rgba(20, 30, 50, 0.55);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    color: #e6e6e6;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  /* Режим без прозрачности - кнопки модалки */
+  body.no-glass .mobile-modal__button {
+    background: var(--solid-bg-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .mobile-modal__button:hover {
+    background: var(--glass-hover-bg);
+    backdrop-filter: var(--glass-hover-blur);
+    -webkit-backdrop-filter: var(--glass-hover-blur);
+    border-color: var(--glass-hover-border);
+    color: #ffffff;
+  }
+
+  /* Режим без прозрачности - hover кнопок модалки */
+  body.no-glass .mobile-modal__button:hover {
+    background: var(--button-secondary-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--border-color);
+  }
+
+  .mobile-modal__button--primary {
+    background: rgba(76, 76, 76, 0.8);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Режим без прозрачности - primary кнопка модалки */
+  body.no-glass .mobile-modal__button--primary {
+    background: var(--button-secondary-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .mobile-modal__button--primary:hover {
+    background: var(--button-primary-color);
+    border-color: rgba(255, 255, 255, 0.3);
   }
