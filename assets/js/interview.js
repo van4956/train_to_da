@@ -393,24 +393,25 @@ function finishInterview() {
 
   // Вычисляем среднюю оценку
   const averageScore = actualAnsweredCount > 0 ? totalScore / actualAnsweredCount : 0;
-  const roundedScore = averageScore.toFixed(1);
+  const roundedScore = averageScore.toFixed(1); // Для отображения в интерфейсе (с одним десятичным знаком)
+  const floorScore = Math.floor(averageScore); // Для текста вердикта (округление вниз до целого)
 
   // Формируем вердикт
   let verdict = "";
 
-  console.log(`DEBUG: actualAnsweredCount = ${actualAnsweredCount}, averageScore = ${averageScore}, roundedScore = ${roundedScore}`);
+  console.log(`DEBUG: actualAnsweredCount = ${actualAnsweredCount}, averageScore = ${averageScore}, roundedScore = ${roundedScore}, floorScore = ${floorScore}`);
 
   if (actualAnsweredCount < 5) {
     verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Вы не прошли интервью. Нужно ответить на минимум 5 вопросов.`;
   } else {
     if (averageScore >= 0 && averageScore < 5) {
-      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью! Ваша оценка ${roundedScore}. Вы не прошли.`;
+      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью! Ваша оценка ${floorScore}. Вы не прошли.`;
     } else if (averageScore >= 5 && averageScore < 7) {
-      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью! Ваша оценка ${roundedScore}, не плохо. Мы вам перезвоним.`;
+      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью! Ваша оценка ${floorScore}, не плохо. Мы вам перезвоним.`;
     } else if (averageScore >= 7 && averageScore < 9) {
-      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью. Ваша оценка ${roundedScore}, это впечатляет. Очень хорошо!`;
+      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью. Ваша оценка ${floorScore}, это впечатляет. Очень хорошо!`;
     } else { // >= 9
-      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью. Ваша оценка ${roundedScore}, это отличный результат. Поздравляем, вы прошли интервью!`;
+      verdict = `Вы ответили на ${actualAnsweredCount} ${getQuestionWord(actualAnsweredCount)}. Спасибо за интервью. Ваша оценка ${floorScore}, это отличный результат. Поздравляем, вы прошли интервью!`;
     }
   }
 
