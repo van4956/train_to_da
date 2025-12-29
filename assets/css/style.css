@@ -993,16 +993,6 @@
     color: #e5e7eb;
   }
 
-  .interview-mode__reference-section {
-    display: none !important; /* Всегда скрыт (эталонный ответ не показываем) */
-    margin-top: 8px;
-  }
-
-  .interview-mode__reference-content {
-    font-size: 16px;
-    color: #cbd5e1;
-    line-height: 1.6;
-  }
 
   /* Стили для списков внутри карточек режима интервью */
   .interview-mode__card ul,

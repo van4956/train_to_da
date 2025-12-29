@@ -28,6 +28,7 @@ function initInterviewMode() {
   initTopicFilter();
   loadRandomCard();
   setupButtons();
+  updateFinishButtonVisibility(); // Скрываем кнопку по умолчанию
 }
 
 /**
@@ -87,21 +88,18 @@ function renderCard() {
 
   const questionLabelEl = document.getElementById("interviewModeQuestionLabel");
   const questionEl = document.getElementById("interviewModeQuestion");
-  const referenceContentEl = document.getElementById("interviewModeReferenceContent");
-  const referenceSectionEl = document.getElementById("interviewModeReference");
   const resultSectionEl = document.getElementById("interviewModeResult");
   const textareaEl = document.getElementById("interviewModeTextarea");
   const submitButton = document.getElementById("interviewModeSubmit");
   const checkingEl = document.getElementById("interviewModeChecking");
 
-  if (!questionLabelEl || !questionEl || !referenceContentEl || !referenceSectionEl || !resultSectionEl || !textareaEl || !submitButton || !checkingEl) return;
+  if (!questionLabelEl || !questionEl || !resultSectionEl || !textareaEl || !submitButton || !checkingEl) return;
 
   // Обновляем заголовок с номером вопроса
   questionLabelEl.textContent = `ВОПРОС ${answeredQuestionsCount}`;
 
-  // Рендерим вопрос и эталонный ответ через marked
+  // Рендерим вопрос через marked
   questionEl.innerHTML = marked.parse(currentCard.question);
-  referenceContentEl.innerHTML = marked.parse(currentCard.answer);
 
   // Сбрасываем состояние (но только если интервью не завершено)
   if (!isInterviewFinished) {
@@ -111,8 +109,7 @@ function renderCard() {
     submitButton.textContent = "Отправить";
   }
 
-  // Скрываем эталонный ответ, результат и состояние проверки
-  referenceSectionEl.style.display = "none";
+  // Скрываем результат и состояние проверки
   resultSectionEl.style.display = "none";
   checkingEl.style.display = "none";
 
@@ -128,14 +125,10 @@ function renderCard() {
  */
 function showEmptyState() {
   const questionEl = document.getElementById("interviewModeQuestion");
-  const referenceContentEl = document.getElementById("interviewModeReferenceContent");
-  const referenceSectionEl = document.getElementById("interviewModeReference");
   const textareaEl = document.getElementById("interviewModeTextarea");
   const submitButton = document.getElementById("interviewModeSubmit");
 
   if (questionEl) questionEl.innerHTML = "<p>Нет карточек для выбранной темы</p>";
-  if (referenceContentEl) referenceContentEl.innerHTML = "";
-  if (referenceSectionEl) referenceSectionEl.style.display = "none";
   if (textareaEl) {
     textareaEl.value = "";
     textareaEl.disabled = true;
@@ -182,9 +175,8 @@ async function handleSubmit() {
   const submitButton = document.getElementById("interviewModeSubmit");
   const checkingEl = document.getElementById("interviewModeChecking");
   const resultSectionEl = document.getElementById("interviewModeResult");
-  const referenceSectionEl = document.getElementById("interviewModeReference");
 
-  if (!textareaEl || !submitButton || !checkingEl || !resultSectionEl || !referenceSectionEl) return;
+  if (!textareaEl || !submitButton || !checkingEl || !resultSectionEl) return;
 
   // Проверяем, что textarea не пустая
   const userAnswer = textareaEl.value.trim();
@@ -234,9 +226,6 @@ async function handleSubmit() {
     // Отображаем результат
     displayResult(data.score, data.feedback);
 
-    // Показываем эталонный ответ
-    referenceSectionEl.style.display = "block";
-
     // Рендерим формулы и markdown
     setTimeout(() => {
       renderMath();
@@ -251,9 +240,6 @@ async function handleSubmit() {
 
     // Показываем сообщение об ошибке
     displayError('Не удалось проверить ответ. Попробуйте позже.');
-
-    // Показываем эталонный ответ даже при ошибке
-    referenceSectionEl.style.display = "block";
 
     setTimeout(() => {
       renderMath();
@@ -296,6 +282,9 @@ function displayResult(score, feedback) {
   actualAnsweredCount++; // Увеличиваем фактический счётчик отвеченных вопросов
   answeredQuestionsCount++; // Увеличиваем счетчик для следующего вопроса
 
+  // Обновляем видимость кнопки "Завершить интервью"
+  updateFinishButtonVisibility();
+
   console.log(`✅ displayResult: actualAnsweredCount = ${actualAnsweredCount} (увеличился), totalScore = ${totalScore}, средняя = ${(totalScore / actualAnsweredCount).toFixed(1)}`);
 }
 
@@ -324,6 +313,9 @@ function displayError(message) {
   actualAnsweredCount++; // Увеличиваем фактический счётчик (даже при ошибке, т.к. пользователь отправил ответ)
   answeredQuestionsCount++; // Увеличиваем счетчик отвеченных вопросов
 
+  // Обновляем видимость кнопки "Завершить интервью"
+  updateFinishButtonVisibility();
+
   console.log(`⚠️ displayError: actualAnsweredCount = ${actualAnsweredCount} (увеличился), totalScore = ${totalScore}, средняя = ${(totalScore / actualAnsweredCount).toFixed(1)}`);
 }
 
@@ -351,21 +343,6 @@ function renderMath() {
     }
   }
 
-  // Рендерим формулы в эталонном ответе (если он отображается)
-  const referenceSectionEl = document.getElementById("interviewModeReference");
-  const referenceContentEl = document.getElementById("interviewModeReferenceContent");
-  if (referenceSectionEl && referenceSectionEl.style.display !== "none" && referenceContentEl) {
-    const hasRenderedMath = referenceContentEl.querySelector(".katex");
-    if (!hasRenderedMath) {
-      renderMathInElement(referenceContentEl, {
-        delimiters: [
-          { left: "$$", right: "$$", display: true },
-          { left: "$", right: "$", display: false }
-        ],
-        throwOnError: false
-      });
-    }
-  }
 }
 
 /**
@@ -479,10 +456,9 @@ function startNewInterview() {
   const nextButton = document.getElementById("interviewModeNext");
   const finishButton = document.getElementById("interviewModeFinish");
   const resultSectionEl = document.getElementById("interviewModeResult");
-  const referenceSectionEl = document.getElementById("interviewModeReference");
   const textareaEl = document.getElementById("interviewModeTextarea");
 
-  if (!submitButton || !nextButton || !finishButton || !resultSectionEl || !referenceSectionEl || !textareaEl) return;
+  if (!submitButton || !nextButton || !finishButton || !resultSectionEl || !textareaEl) return;
 
   // Сбрасываем счётчики и статистику
   answeredQuestionsCount = 1;
@@ -497,18 +473,37 @@ function startNewInterview() {
   // Меняем кнопку обратно на "Завершить интервью"
   finishButton.textContent = "Завершить интервью";
 
-  // Скрываем блоки результата и эталонного ответа
+  // Скрываем блок результата
   resultSectionEl.style.display = "none";
-  referenceSectionEl.style.display = "none";
 
   // Очищаем textarea
   textareaEl.value = "";
   textareaEl.disabled = false;
 
+  // Обновляем видимость кнопки "Завершить интервью" (скрываем, т.к. actualAnsweredCount = 0)
+  updateFinishButtonVisibility();
+
   // Загружаем новый вопрос
   loadRandomCard();
 
   console.log("Начато новое интервью");
+}
+
+/**
+ * Обновление видимости кнопки "Завершить интервью"
+ * Кнопка показывается только если ответов >= 5 (или если интервью уже завершено)
+ */
+function updateFinishButtonVisibility() {
+  const finishButton = document.getElementById("interviewModeFinish");
+  if (!finishButton) return;
+
+  // Если интервью завершено, кнопка всегда видима (она стала "Новое интервью")
+  // Иначе показываем только если отвечено 5 или более вопросов
+  if (isInterviewFinished || actualAnsweredCount >= 5) {
+    finishButton.style.display = "";
+  } else {
+    finishButton.style.display = "none";
+  }
 }
 
 /**
