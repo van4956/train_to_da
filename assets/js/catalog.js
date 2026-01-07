@@ -115,9 +115,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     const article = document.createElement("article");
     article.className = "card";
 
+    // Форматируем тему: каждая тема - отдельный span для правильных отступов через gap
+    let topicSpans = "";
+    if (Array.isArray(card.topic)) {
+      if (card.topic.length > 0) {
+        topicSpans = card.topic.map(topic => `<span class="card__topic">${topic}</span>`).join("");
+      } else {
+        topicSpans = '<span class="card__topic">—</span>';
+      }
+    } else {
+      topicSpans = `<span class="card__topic">${card.topic ?? "—"}</span>`;
+    }
+
     article.innerHTML = `
       <div class="card__meta">
-        <span class="card__topic">${card.topic ?? "—"}</span>
+        ${topicSpans}
         <span class="card__level">${formatLevel(card.level)}</span>
         <span class="card__id">#${String(card.id).padStart(3, "0")}</span>
       </div>

@@ -180,7 +180,14 @@ const FILTERS = {
     const cards = (typeof getCards === "function") ? getCards() : [];
     const uniq = new Set();
     for (const c of cards) {
-      if (c.topic) uniq.add(c.topic);
+      if (c.topic) {
+        // Поддержка как массива тем, так и строки (для обратной совместимости)
+        if (Array.isArray(c.topic)) {
+          c.topic.forEach(t => uniq.add(t));
+        } else {
+          uniq.add(c.topic);
+        }
+      }
     }
     return Array.from(uniq).sort((a, b) => a.localeCompare(b, "ru"));
   }
@@ -212,7 +219,9 @@ const FILTERS = {
    */
   function applyFilters(cards, filters = FILTERS) {
     let filtered = cards.filter((c) => {
-      const okTopic = filters.topic === "all" || c.topic === filters.topic;
+      // Поддержка как массива тем, так и строки (для обратной совместимости)
+      const okTopic = filters.topic === "all"
+        || (Array.isArray(c.topic) ? c.topic.includes(filters.topic) : c.topic === filters.topic);
       const okLevel = filters.level === "all" || c.level === filters.level;
       return okTopic && okLevel;
     });

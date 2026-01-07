@@ -2,7 +2,7 @@
 
 Статический [веб-тренажёр](https://train-to-da.vercel.app/index.html) для подготовки к собеседованиям на позицию DA / DS / ML.
 
-Тренажёр построен на основе Markdown-заметок из личной Базы Знаний Obsidian.  
+Тренажёр построен на основе Markdown-заметок из личной Базы Знаний Obsidian.
 Основная цель — системное повторение теории, активное вспоминание и симуляция интервью.
 
 
@@ -16,7 +16,7 @@
   - Карточки
   - Блиц
   - Интервью
-- Статический хостинг через GitHub Pages
+- Статический хостинг через GitHub Pages + Vercel
 
 
 ## Структура проекта
@@ -29,10 +29,10 @@
 │ ├── №2.md
 │ └── ...
 ├── api/
-│ └── interview.py                # проверка ответов через OpenAI API
+│ └── interview.py                # OpenAI API
 ├── assets/
 │ ├── css/
-│ │ └── style.css
+│ │ └── style.css                 # визуальная часть
 │ ├── js/
 │ │ ├── data.js                   # загрузка data.json
 │ │ ├── filters.js                # фильтрация по теме, по уровню
@@ -41,17 +41,14 @@
 │ │ ├── blitz.js                  # логика режима блиц
 │ │ ├── interview.js              # логика режима интервью
 │ │ └── mobile-warning.js         # предупреждение для мобильных устройств
-│ └── icons/                      # картинки, иконки, фоны
-│   ├── readme.jpg
-│   ├── favicon.png
-│   └── image.jpg
+│ └── icons/
 ├── build.py                      # сборка data.json
 ├── data.json                     # единый источник данных
 ├── index.html                    # главная, режим каталог
 ├── cards.html                    # режим карточек
 ├── blitz.html                    # режим блиц
 ├── interview.html                # режим интервью
-├── requirements.txt              # зависимости
+├── requirements.txt
 ├── vercel.json                   # конфигурация Vercel
 └── README.md
 ```
@@ -76,15 +73,14 @@
 python build.py
 ```
 
-- читает все `.md`
-- парсит вопросы, ответы, теги
-- формирует структуру данных для фронта
 
 
 
 ## Тренажёр
 
 ![Readme](assets/icons/readme.jpg)
+
+![Readme](assets/icons/readme_2.jpg)
 
 
 

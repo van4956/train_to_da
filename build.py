@@ -89,14 +89,14 @@ def build():
     for md_file in DB_DIR.glob("№*.md"):
         card = parse_card(md_file)
 
-        # определяем тему карточки
-        card_topic = None
+        # определяем все темы карточки (может быть несколько)
+        card_topics = []
         for topic, ids in topics_map.items():
             if card["id"] in ids:
-                card_topic = topic
-                break
+                card_topics.append(topic)
 
-        card["topic"] = card_topic
+        # Сохраняем массив тем (пустой массив, если темы не найдены)
+        card["topic"] = card_topics
         cards.append(card)
 
     cards.sort(key=lambda x: x["id"])

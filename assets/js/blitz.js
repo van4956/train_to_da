@@ -69,7 +69,12 @@ function loadRandomCard() {
   const allCards = getCards();
   availableCards = selectedTopic === "all"
     ? allCards
-    : allCards.filter(card => card.topic === selectedTopic);
+    : allCards.filter(card => {
+        // Поддержка как массива тем, так и строки (для обратной совместимости)
+        return Array.isArray(card.topic)
+          ? card.topic.includes(selectedTopic)
+          : card.topic === selectedTopic;
+      });
 
   if (availableCards.length === 0) {
     showEmptyState();

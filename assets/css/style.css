@@ -364,6 +364,16 @@
     list-style-type: decimal;
   }
 
+  /* Отступы между параграфами в карточках каталога */
+  .card p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .card p:last-child {
+    margin-bottom: 0; /* Убираем отступ у последнего параграфа */
+  }
+
   .card__toggle {
     background: none;
     border: 1px solid var(--border-color);
@@ -511,6 +521,20 @@
     list-style-type: decimal;
   }
 
+  /* Отступы между параграфами в режиме карточек */
+  .cards-mode__card p,
+  .cards-mode__question p,
+  .cards-mode__answer-content p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .cards-mode__card p:last-child,
+  .cards-mode__question p:last-child,
+  .cards-mode__answer-content p:last-child {
+    margin-bottom: 0; /* Убираем отступ у последнего параграфа */
+  }
+
   .cards-mode__controls {
     display: flex;
     gap: 12px;
@@ -634,6 +658,20 @@
 
   .blitz-mode__card ol {
     list-style-type: decimal;
+  }
+
+  /* Отступы между параграфами в режиме блиц */
+  .blitz-mode__card p,
+  .blitz-mode__question p,
+  .blitz-mode__answer-content p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .blitz-mode__card p:last-child,
+  .blitz-mode__question p:last-child,
+  .blitz-mode__answer-content p:last-child {
+    margin-bottom: 0; /* Убираем отступ у последнего параграфа */
   }
 
   .blitz-mode__controls {
@@ -1012,6 +1050,22 @@
 
   .interview-mode__card ol {
     list-style-type: decimal;
+  }
+
+  /* Отступы между параграфами в режиме интервью */
+  .interview-mode__card p,
+  .interview-mode__question p,
+  .interview-mode__answer-content p,
+  .interview-mode__feedback-content p {
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .interview-mode__card p:last-child,
+  .interview-mode__question p:last-child,
+  .interview-mode__answer-content p:last-child,
+  .interview-mode__feedback-content p:last-child {
+    margin-bottom: 0; /* Убираем отступ у последнего параграфа */
   }
 
   /* Стили для блоков кода внутри режима интервью */
