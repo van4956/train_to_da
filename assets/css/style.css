@@ -91,6 +91,7 @@
     text-align: center;
     background: var(--button-primary-color-background);
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    font-size: 18px; /* Увеличен размер шрифта кнопок навигации */
   }
 
   .nav__link:hover {
@@ -143,7 +144,7 @@
 
   .filters__group label {
     display: block;
-    font-size: 12px;
+    font-size: 14px; /* Выровнено с размером описания в шапке (.header__subtitle) - было 12px */
     color: #9ca3af;
     margin-bottom: 4px;
   }
@@ -156,7 +157,7 @@
     padding: var(--element-padding);
     border-radius: var(--border-radius);
     font-family: inherit;
-    font-size: 14px;
+    font-size: 16px; /* Размер шрифта содержимого поля поиска */
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   }
 
@@ -190,7 +191,7 @@
     padding-right: 28px;
     border-radius: var(--border-radius);
     font-family: inherit;
-    font-size: 14px;
+    font-size: 16px; /* Размер шрифта содержимого выпадающих списков */
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -256,7 +257,7 @@
     cursor: pointer;
     border-radius: var(--border-radius);
     transition: background-color 0.15s ease, color 0.15s ease;
-    font-size: 14px;
+    font-size: 16px; /* Размер шрифта элементов выпадающих списков */
   }
 
   .custom-dropdown__item:hover,
@@ -276,7 +277,7 @@
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: var(--element-padding);
-    font-size: 14px;
+    font-size: 18px; /* Увеличен размер шрифта содержимого информационного блока (статистика) */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -330,14 +331,17 @@
   }
 
   .card__question {
-    font-size: 16px;
+    font-size: 18px; /* Выровнено с режимом "Карточки" (было 16px) */
     margin-bottom: 12px;
+    color: #e6e6e6; /* Явно указан цвет для единообразия */
+    line-height: 1.6; /* Добавлен line-height для единообразия */
   }
 
   .card__answer {
-    font-size: 14px;
+    font-size: 16px; /* Выровнено с режимом "Карточки" (было 14px) */
     color: #cbd5e1;
     margin-bottom: 12px;
+    line-height: 1.6; /* Добавлен line-height для единообразия */
   }
 
   .card__answer--hidden {
@@ -380,7 +384,7 @@
     color: #e6e6e6;
     padding: 10px 20px;
     border-radius: var(--border-radius);
-    font-size: 14px;
+    font-size: 16px; /* Увеличен размер шрифта кнопки (было 14px) */
     font-weight: 500;
     cursor: pointer;
     margin-top: 12px;
@@ -454,7 +458,7 @@
 
   .cards-mode__filter label {
     display: block;
-    font-size: 12px;
+    font-size: 14px; /* Выровнено с размером описания в шапке (.header__subtitle) - было 12px */
     color: #9ca3af;
     margin-bottom: 4px;
   }
@@ -544,7 +548,7 @@
   .cards-mode__button {
     padding: 10px 20px;
     border-radius: var(--border-radius);
-    font-size: 14px;
+    font-size: 16px; /* Увеличен размер шрифта кнопок (было 14px) */
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
@@ -594,7 +598,7 @@
 
   .blitz-mode__filter label {
     display: block;
-    font-size: 12px;
+    font-size: 14px; /* Выровнено с размером описания в шапке (.header__subtitle) - было 12px */
     color: #9ca3af;
     margin-bottom: 4px;
   }
@@ -684,7 +688,7 @@
   .blitz-mode__button {
     padding: 10px 20px;
     border-radius: var(--border-radius);
-    font-size: 14px;
+    font-size: 16px; /* Увеличен размер шрифта кнопок (было 14px) */
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
@@ -833,7 +837,7 @@
 
   .interview-mode__filter label {
     display: block;
-    font-size: 12px;
+    font-size: 14px; /* Выровнено с размером описания в шапке (.header__subtitle) - было 12px */
     color: #9ca3af;
     margin-bottom: 4px;
   }
@@ -925,7 +929,7 @@
   .interview-mode__button {
     padding: 10px 20px;
     border-radius: var(--border-radius);
-    font-size: 14px;
+    font-size: 16px; /* Увеличен размер шрифта кнопок (было 14px) */
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
