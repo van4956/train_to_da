@@ -175,9 +175,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const totalInBase = allCards.length;
     const filteredCount = cards.length;
 
-    // Обновляем "X" и "из Y карточек" раздельно
+    // Обновляем "X" и "из Y" раздельно
     statsCountActiveEl.textContent = filteredCount;
-    statsCountTotalEl.textContent = `из ${totalInBase} карточек`;
+    statsCountTotalEl.textContent = `из ${totalInBase}`;
 
     // Обновляем счётчики по уровням (только среди отфильтрованных)
     if (lvl1El) lvl1El.textContent = cards.filter(c => c.level === "lvl_1").length;
