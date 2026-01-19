@@ -39,4 +39,8 @@ prompt_config.sh
 prompt_config.txt
 spec.md
 
+# Тестовые файлы (содержат секреты)
+test_*
+test_*.py
+
 .gitattributes
