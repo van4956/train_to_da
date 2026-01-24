@@ -4,6 +4,24 @@
 let currentCard = null;
 let availableCards = [];
 
+// Максимальная длительность записи в секундах (автоостановка)
+const MAX_RECORDING_SECONDS = 60;
+
+// Поддерживаемые типы записи (ограничиваемся webm/ogg)
+const AUDIO_MIME_TYPES = [
+  { mimeType: "audio/webm;codecs=opus", extension: "webm" },
+  { mimeType: "audio/webm", extension: "webm" },
+  { mimeType: "audio/ogg;codecs=opus", extension: "ogg" },
+  { mimeType: "audio/ogg", extension: "ogg" }
+];
+
+let mediaRecorder = null;
+let mediaStream = null;
+let audioChunks = [];
+let recordingTimeoutId = null;
+let currentMimeType = null;
+let isProcessingAudio = false;
+
 // Счетчики для статистики интервью
 let answeredQuestionsCount = 1; // Начинается с 1, увеличивается после каждого "Отправить"
 let totalScore = 0; // Сумма всех оценок для расчета средней
@@ -28,6 +46,7 @@ function initInterviewMode() {
   initTopicFilter();
   loadRandomCard();
   setupButtons();
+  setupMicButton();
   updateFinishButtonVisibility(); // Скрываем кнопку по умолчанию
 }
 
@@ -97,6 +116,7 @@ function renderCard() {
   const textareaEl = document.getElementById("interviewModeTextarea");
   const submitButton = document.getElementById("interviewModeSubmit");
   const checkingEl = document.getElementById("interviewModeChecking");
+  const micButton = document.getElementById("interviewModeMicButton");
 
   if (!questionLabelEl || !questionEl || !resultSectionEl || !textareaEl || !submitButton || !checkingEl) return;
 
@@ -112,6 +132,13 @@ function renderCard() {
     textareaEl.disabled = false;
     submitButton.disabled = false;
     submitButton.textContent = "Отправить";
+    if (micButton) {
+      if (micButton.dataset.unsupported !== "true" && micButton.dataset.locked !== "true") {
+        micButton.disabled = false;
+      }
+      micButton.classList.remove("interview-mode__mic-button--processing");
+      micButton.classList.remove("interview-mode__mic-button--recording");
+    }
   }
 
   // Скрываем результат и состояние проверки
@@ -148,6 +175,7 @@ function setupButtons() {
   const submitButton = document.getElementById("interviewModeSubmit");
   const nextButton = document.getElementById("interviewModeNext");
   const finishButton = document.getElementById("interviewModeFinish");
+  const micButton = document.getElementById("interviewModeMicButton");
 
   // Кнопка "Отправить"
   if (submitButton) {
@@ -169,6 +197,260 @@ function setupButtons() {
       handleFinishInterview();
     });
   }
+
+  if (micButton) {
+    micButton.addEventListener("click", () => {
+      handleMicButtonClick();
+    });
+  }
+}
+
+/**
+ * Возвращает первый поддерживаемый mime-тип записи
+ */
+function getSupportedMimeType() {
+  if (typeof MediaRecorder === "undefined") {
+    return null;
+  }
+
+  for (const option of AUDIO_MIME_TYPES) {
+    if (MediaRecorder.isTypeSupported(option.mimeType)) {
+      return option;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Показывает всплывающее сообщение на 2 секунды
+ */
+function showToast(message) {
+  const existingToast = document.querySelector(".toast-message");
+  if (existingToast) {
+    existingToast.remove();
+  }
+
+  const toast = document.createElement("div");
+  toast.className = "toast-message";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 2000);
+}
+
+/**
+ * Устанавливает визуальное состояние кнопки микрофона
+ */
+function setMicButtonState(state) {
+  const micButton = document.getElementById("interviewModeMicButton");
+  const textareaEl = document.getElementById("interviewModeTextarea");
+  if (!micButton) return;
+
+  micButton.classList.remove("interview-mode__mic-button--recording");
+  micButton.classList.remove("interview-mode__mic-button--processing");
+
+  if (state === "recording") {
+    micButton.classList.add("interview-mode__mic-button--recording");
+    if (micButton.dataset.unsupported !== "true" && micButton.dataset.locked !== "true") {
+      micButton.disabled = false;
+    }
+  }
+
+  if (state === "processing") {
+    micButton.classList.add("interview-mode__mic-button--processing");
+    micButton.disabled = true;
+  }
+
+  if (state === "idle") {
+    if (
+      micButton.dataset.unsupported !== "true"
+      && micButton.dataset.locked !== "true"
+      && textareaEl
+      && !textareaEl.disabled
+    ) {
+      micButton.disabled = false;
+    }
+  }
+}
+
+/**
+ * Инициализация кнопки микрофона
+ */
+function setupMicButton() {
+  const micButton = document.getElementById("interviewModeMicButton");
+  if (!micButton) return;
+
+  const hasMediaDevices = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+  const supported = getSupportedMimeType();
+  if (!hasMediaDevices || !supported) {
+    micButton.disabled = true;
+    micButton.dataset.unsupported = "true";
+    micButton.dataset.locked = "true";
+  }
+}
+
+/**
+ * Запуск записи аудио
+ */
+async function startRecording() {
+  const micButton = document.getElementById("interviewModeMicButton");
+  const textareaEl = document.getElementById("interviewModeTextarea");
+
+  if (!micButton || !textareaEl) return;
+  if (textareaEl.disabled || micButton.disabled || isProcessingAudio) return;
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showToast("Ваш браузер не поддерживает запись.");
+    micButton.disabled = true;
+    micButton.dataset.locked = "true";
+    return;
+  }
+
+  const supported = getSupportedMimeType();
+  if (!supported) {
+    showToast("Запись не поддерживается в этом браузере.");
+    micButton.disabled = true;
+    micButton.dataset.locked = "true";
+    return;
+  }
+
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (error) {
+    console.error("Ошибка доступа к микрофону:", error);
+    showToast("Нет доступа к микрофону.");
+    micButton.disabled = true;
+    micButton.dataset.locked = "true";
+    return;
+  }
+
+  currentMimeType = supported;
+  audioChunks = [];
+
+  try {
+    mediaRecorder = new MediaRecorder(mediaStream, { mimeType: supported.mimeType });
+  } catch (error) {
+    console.error("Ошибка MediaRecorder:", error);
+    showToast("Не удалось начать запись.");
+    return;
+  }
+
+  mediaRecorder.addEventListener("dataavailable", event => {
+    if (event.data && event.data.size > 0) {
+      audioChunks.push(event.data);
+    }
+  });
+
+  mediaRecorder.addEventListener("stop", () => {
+    clearTimeout(recordingTimeoutId);
+    recordingTimeoutId = null;
+    stopMediaStream();
+    handleRecordingStop();
+  });
+
+  setMicButtonState("recording");
+  mediaRecorder.start();
+
+  recordingTimeoutId = setTimeout(() => {
+    stopRecording();
+  }, MAX_RECORDING_SECONDS * 1000);
+}
+
+/**
+ * Остановка записи аудио
+ */
+function stopRecording() {
+  if (!mediaRecorder) return;
+  if (mediaRecorder.state !== "recording") return;
+
+  mediaRecorder.stop();
+}
+
+/**
+ * Освобождение микрофона
+ */
+function stopMediaStream() {
+  if (!mediaStream) return;
+
+  mediaStream.getTracks().forEach(track => {
+    track.stop();
+  });
+  mediaStream = null;
+}
+
+/**
+ * Обработка остановки записи: отправка на сервер
+ */
+async function handleRecordingStop() {
+  if (!currentMimeType || audioChunks.length === 0) {
+    setMicButtonState("idle");
+    audioChunks = [];
+    currentMimeType = null;
+    mediaRecorder = null;
+    return;
+  }
+
+  const blob = new Blob(audioChunks, { type: currentMimeType.mimeType });
+  const audioFile = new File([blob], `recording.${currentMimeType.extension}`, {
+    type: currentMimeType.mimeType
+  });
+
+  setMicButtonState("processing");
+  isProcessingAudio = true;
+
+  try {
+    const formData = new FormData();
+    formData.append("audio", audioFile);
+
+    const response = await fetch("/api/transcribe", {
+      method: "POST",
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Ошибка API:", errorText);
+      throw new Error("API error");
+    }
+
+    const data = await response.json();
+    const transcribedText = (data.text || "").trim();
+
+    if (transcribedText) {
+      const textareaEl = document.getElementById("interviewModeTextarea");
+      if (textareaEl && !textareaEl.disabled) {
+        const existingText = textareaEl.value;
+        const separator = existingText && !existingText.endsWith("\n") ? "\n" : "";
+        textareaEl.value = `${existingText}${separator}${transcribedText}`;
+      }
+    }
+  } catch (error) {
+    console.error("Ошибка транскрибации:", error);
+    showToast("Не удалось обработать аудио. Попробуйте позже.");
+  } finally {
+    isProcessingAudio = false;
+    setMicButtonState("idle");
+    audioChunks = [];
+    currentMimeType = null;
+    mediaRecorder = null;
+  }
+}
+
+/**
+ * Обработчик клика по кнопке микрофона
+ */
+function handleMicButtonClick() {
+  if (isProcessingAudio) return;
+
+  if (mediaRecorder && mediaRecorder.state === "recording") {
+    stopRecording();
+    return;
+  }
+
+  startRecording();
 }
 
 /**
@@ -180,6 +462,7 @@ async function handleSubmit() {
   const submitButton = document.getElementById("interviewModeSubmit");
   const checkingEl = document.getElementById("interviewModeChecking");
   const resultSectionEl = document.getElementById("interviewModeResult");
+  const micButton = document.getElementById("interviewModeMicButton");
 
   if (!textareaEl || !submitButton || !checkingEl || !resultSectionEl) return;
 
@@ -191,9 +474,18 @@ async function handleSubmit() {
 
   if (!currentCard) return;
 
-  // Блокируем textarea и кнопку
+  // Блокируем textarea, кнопку отправки и микрофон
   textareaEl.disabled = true;
   submitButton.disabled = true;
+  if (micButton) {
+    micButton.disabled = true;
+    micButton.classList.remove("interview-mode__mic-button--recording");
+    micButton.classList.remove("interview-mode__mic-button--processing");
+  }
+
+  if (mediaRecorder && mediaRecorder.state === "recording") {
+    stopRecording();
+  }
 
   // Показываем состояние "Проверка..."
   checkingEl.style.display = "block";
@@ -393,6 +685,7 @@ function finishInterview() {
   const scoreEl = document.getElementById("interviewModeScore");
   const feedbackEl = document.getElementById("interviewModeFeedback");
   const resultSectionEl = document.getElementById("interviewModeResult");
+  const micButton = document.getElementById("interviewModeMicButton");
 
   if (!submitButton || !nextButton || !finishButton || !scoreEl || !feedbackEl || !resultSectionEl) return;
 
@@ -444,6 +737,9 @@ function finishInterview() {
   // Блокируем кнопки
   submitButton.disabled = true;
   nextButton.disabled = true;
+  if (micButton) {
+    micButton.disabled = true;
+  }
 
   // Меняем кнопку "Завершить интервью" на "Новое интервью"
   finishButton.textContent = "Новое интервью";
@@ -463,6 +759,7 @@ function startNewInterview() {
   const finishButton = document.getElementById("interviewModeFinish");
   const resultSectionEl = document.getElementById("interviewModeResult");
   const textareaEl = document.getElementById("interviewModeTextarea");
+  const micButton = document.getElementById("interviewModeMicButton");
 
   if (!submitButton || !nextButton || !finishButton || !resultSectionEl || !textareaEl) return;
 
@@ -475,6 +772,11 @@ function startNewInterview() {
   // Разблокируем кнопки
   submitButton.disabled = false;
   nextButton.disabled = false;
+  if (micButton) {
+    if (micButton.dataset.unsupported !== "true" && micButton.dataset.locked !== "true") {
+      micButton.disabled = false;
+    }
+  }
 
   // Меняем кнопку обратно на "Завершить интервью"
   finishButton.textContent = "Завершить интервью";
@@ -485,6 +787,11 @@ function startNewInterview() {
   // Очищаем textarea
   textareaEl.value = "";
   textareaEl.disabled = false;
+
+  if (micButton) {
+    micButton.classList.remove("interview-mode__mic-button--recording");
+    micButton.classList.remove("interview-mode__mic-button--processing");
+  }
 
   // Обновляем видимость кнопки "Завершить интервью" (скрываем, т.к. actualAnsweredCount = 0)
   updateFinishButtonVisibility();

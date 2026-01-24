@@ -12,8 +12,8 @@ from openai import OpenAI  # type: ignore
 # Максимальный размер файла (25 MB - лимит Whisper API)
 MAX_FILE_SIZE = 25 * 1024 * 1024
 
-# Поддерживаемые форматы аудио
-SUPPORTED_FORMATS = {'.webm', '.ogg', '.mp3', '.wav', '.m4a'}
+# Поддерживаемые форматы аудио (ограничиваемся webm/ogg)
+SUPPORTED_FORMATS = {'.webm', '.ogg'}
 
 
 def parse_multipart_form_data(body: bytes, boundary: bytes) -> dict:
