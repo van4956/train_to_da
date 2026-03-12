@@ -19,7 +19,7 @@ ENV/
 .env.example
 
 # IDE
-.codex 
+.codex/
 .cursor/
 .vscode/
 .idea/
