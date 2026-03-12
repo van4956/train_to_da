@@ -1,3 +1,9 @@
 {
-  "version": 2
+  "rewrites": [
+    { "source": "/", "destination": "/assets/html/index.html" },
+    { "source": "/index.html", "destination": "/assets/html/index.html" },
+    { "source": "/cards", "destination": "/assets/html/cards.html" },
+    { "source": "/blitz", "destination": "/assets/html/blitz.html" },
+    { "source": "/interview", "destination": "/assets/html/interview.html" }
+  ]
 }
