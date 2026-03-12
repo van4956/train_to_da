@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <title>Train to DA</title>
-  <link rel="icon" type="image/png" href="assets/icons/favicon.png?v=2" />
+  <link rel="icon" type="image/png" href="../icons/favicon.png?v=2" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Вопросы по ML, SQL, Python, Алгоритмам, Статистике, Теории вероятностей. Подготовка к собеседованиям на позицию DA / DS / ML." />
 
   <!-- Общие стили -->
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="../css/style.css" />
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
 
@@ -63,11 +63,11 @@
       <nav class="header__nav">
         <a href="index.html" class="nav__link">Каталог</a>
         <a href="cards.html" class="nav__link">Карточки</a>
-        <a href="blitz.html" class="nav__link">Блиц</a>
-        <a href="interview.html" class="nav__link nav__link--active">ИНТЕРВЬЮ</a>
+        <a href="blitz.html" class="nav__link nav__link--active">БЛИЦ</a>
+        <a href="interview.html" class="nav__link">Интервью</a>
       </nav>
 
-      <p class="header__mode-description">ИНТЕРВЬЮ. Одиночные вопросы со свободным ответом, автоматической оценкой и фидбеком от gpt-4o. Ответь на 5 вопросов чтобы пройти интервью.</p>
+      <p class="header__mode-description">БЛИЦ. Быстрая самопроверка с субъективной оценкой «Знал» / «Не знал», и отслеживанием статистики сессии.</p>
 
     </div>
   </header>
@@ -75,15 +75,15 @@
   <!-- ================= MAIN ================= -->
   <main class="main">
 
-    <!-- ===== БЛОК ИНТЕРВЬЮ ===== -->
-    <section class="interview-mode">
-      <div class="interview-mode__container">
+    <!-- ===== БЛОК БЛИЦА ===== -->
+    <section class="blitz-mode">
+      <div class="blitz-mode__container">
 
         <!-- Фильтр "Тема" -->
-        <div class="interview-mode__filter">
-          <label for="interviewTopicFilter">Тема</label>
-          <div class="custom-dropdown" data-select-id="interviewTopicFilter">
-            <select id="interviewTopicFilter" style="display: none;">
+        <div class="blitz-mode__filter">
+          <label for="blitzTopicFilter">Тема</label>
+          <div class="custom-dropdown" data-select-id="blitzTopicFilter">
+            <select id="blitzTopicFilter" style="display: none;">
               <option value="all">Все темы</option>
               <!-- темы подставляются из data.json -->
             </select>
@@ -97,69 +97,42 @@
           </div>
         </div>
 
-        <!-- Карточка интервью -->
-        <div class="interview-mode__card" id="interviewModeCard">
-          <div class="interview-mode__question-section">
-            <div class="interview-mode__label" id="interviewModeQuestionLabel">ВОПРОС 1</div>
-            <div class="interview-mode__question" id="interviewModeQuestion">
+        <!-- Карточка блиц-режима -->
+        <div class="blitz-mode__card" id="blitzModeCard">
+          <div class="blitz-mode__question-section">
+            <div class="blitz-mode__label">ВОПРОС</div>
+            <div class="blitz-mode__question" id="blitzModeQuestion">
               <!-- вопрос рендерится JS-ом -->
             </div>
           </div>
 
-          <div class="interview-mode__user-answer-section">
-            <div class="interview-mode__label">ВАШ ОТВЕТ</div>
-            <div class="interview-mode__textarea-wrapper">
-              <textarea
-                class="interview-mode__textarea"
-                id="interviewModeTextarea"
-                placeholder="Сформулируйте ваш ответ..."
-                rows="8"
-              ></textarea>
-              <button
-                type="button"
-                class="interview-mode__mic-button"
-                id="interviewModeMicButton"
-                aria-label="Запись голоса"
-              >
-                <svg class="interview-mode__mic-icon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z" fill="currentColor"/>
-                  <path d="M19 11a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.92V20H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.08A7 7 0 0 0 19 11z" fill="currentColor"/>
-                </svg>
-              </button>
+          <div class="blitz-mode__answer-section" id="blitzModeAnswer">
+            <div class="blitz-mode__label">ОТВЕТ</div>
+            <div class="blitz-mode__answer-content" id="blitzModeAnswerContent">
+              <!-- ответ рендерится JS-ом -->
             </div>
           </div>
 
-          <div class="interview-mode__controls">
-            <button type="button" class="interview-mode__button interview-mode__button--submit" id="interviewModeSubmit">
-              Отправить
+          <div class="blitz-mode__controls">
+            <button type="button" class="blitz-mode__button blitz-mode__button--show" id="blitzModeShowAnswer">
+              Показать ответ
             </button>
-            <button type="button" class="interview-mode__button interview-mode__button--next" id="interviewModeNext">
+            <button type="button" class="blitz-mode__button blitz-mode__button--knew" id="blitzModeKnew">
+              Знал
+            </button>
+            <button type="button" class="blitz-mode__button blitz-mode__button--didnt-know" id="blitzModeDidntKnow">
+              Не знал
+            </button>
+            <button type="button" class="blitz-mode__button blitz-mode__button--next" id="blitzModeNext">
               Следующий вопрос
             </button>
-            <button type="button" class="interview-mode__button interview-mode__button--finish" id="interviewModeFinish">
-              Завершить интервью
-            </button>
           </div>
 
-          <!-- Состояние "Проверка..." -->
-          <div class="interview-mode__checking" id="interviewModeChecking">
-            Проверка...
+          <!-- Статистика сессии -->
+          <!-- <div class="blitz-mode__label">СТАТИСТИКА</div> -->
+          <div class="blitz-mode__stats" id="blitzModeStats">
+            Количество ответов: <span id="blitzStatsTotal">0</span> &nbsp;&nbsp; Точность: <span id="blitzStatsAccuracy">0</span>% &nbsp;&nbsp; Серия: х<span id="blitzStatsStreak">0</span>
           </div>
-
-          <!-- Результат проверки (оценка + фидбек) -->
-          <div class="interview-mode__result-section" id="interviewModeResult">
-            <div class="interview-mode__score-block">
-              <div class="interview-mode__label">ОЦЕНКА</div>
-              <div class="interview-mode__score-value" id="interviewModeScore">—</div>
-            </div>
-            <div class="interview-mode__feedback-block">
-              <div class="interview-mode__label">ФИДБЕК</div>
-              <div class="interview-mode__feedback-content" id="interviewModeFeedback">
-                <!-- фидбек от GPT рендерится JS-ом -->
-              </div>
-            </div>
-          </div>
-
         </div>
 
       </div>
@@ -188,10 +161,10 @@
   </footer>
 
   <!-- ================= SCRIPTS ================= -->
-  <script src="assets/js/mobile-warning.js"></script>
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/filters.js"></script>
-  <script src="assets/js/interview.js"></script>
+  <script src="../js/mobile-warning.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/filters.js"></script>
+  <script src="../js/blitz.js"></script>
 
 </body>
 </html>
