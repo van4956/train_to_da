@@ -57,6 +57,7 @@
   }
 
   .header__title {
+    font-family: monospace;
     font-size: 36px; /* размер шрифта */
     letter-spacing: 4px; /* межбуквенное расстояние */
     line-height: 2; /* высота строки */
@@ -956,16 +957,17 @@
   }
 
   .interview-mode__mic-button--recording {
-    border-color: rgb(68, 68, 68);
-    color: rgb(68, 68, 68);
-    background: rgba(68, 68, 68, 0.15);
-    animation: mic-pulse 1.2s ease-in-out infinite;
+    border-color: rgb(196, 196, 196);
+    color: rgb(196, 196, 196);
+    background-color: rgba(156, 163, 175, 0.6);
+    animation: mic-pulse 1.3s ease-in-out infinite;
   }
 
   .interview-mode__mic-button--processing {
     border-color: rgb(156, 163, 175);
     color: transparent;
     background: rgba(156, 163, 175, 0.15);
+    animation: none;
   }
 
   .interview-mode__mic-button--processing .interview-mode__mic-icon {
@@ -985,13 +987,13 @@
 
   @keyframes mic-pulse {
     0% {
-      transform: scale(1);
+      background-color: rgba(156, 163, 175, 0.6);
     }
     50% {
-      transform: scale(1.08);
+      background-color: rgba(156, 163, 175, 0.1);
     }
     100% {
-      transform: scale(1);
+      background-color: rgba(156, 163, 175, 0.6);
     }
   }
 
