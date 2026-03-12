@@ -10,7 +10,7 @@ async function loadData() {
     return DATA;
   }
 
-  const response = await fetch("../../data.json");
+  const response = await fetch("/data.json");
   if (!response.ok) {
     throw new Error("Не удалось загрузить data.json");
   }
