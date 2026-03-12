@@ -185,7 +185,8 @@ function renderMath() {
           { left: "$$", right: "$$", display: true },
           { left: "$", right: "$", display: false }
         ],
-        throwOnError: false
+        throwOnError: false,
+        strict: "ignore"
       });
     }
   }
@@ -199,7 +200,8 @@ function renderMath() {
           { left: "$$", right: "$$", display: true },
           { left: "$", right: "$", display: false }
         ],
-        throwOnError: false
+        throwOnError: false,
+        strict: "ignore"
       });
     }
   }

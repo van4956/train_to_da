@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <title>Train to DA</title>
-  <link rel="icon" type="image/png" href="assets/icons/favicon.png?v=2" />
+  <link rel="icon" type="image/png" href="../icons/favicon.png?v=2" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Вопросы по ML, SQL, Python, Алгоритмам, Статистике, Теории вероятностей. Подготовка к собеседованиям на позицию DA / DS / ML." />
 
   <!-- Общие стили -->
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="../css/style.css" />
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
 
@@ -62,12 +62,12 @@
 
       <nav class="header__nav">
         <a href="index.html" class="nav__link">Каталог</a>
-        <a href="cards.html" class="nav__link">Карточки</a>
-        <a href="blitz.html" class="nav__link nav__link--active">БЛИЦ</a>
+        <a href="cards.html" class="nav__link nav__link--active">КАРТОЧКИ</a>
+        <a href="blitz.html" class="nav__link">Блиц</a>
         <a href="interview.html" class="nav__link">Интервью</a>
       </nav>
 
-      <p class="header__mode-description">БЛИЦ. Быстрая самопроверка с субъективной оценкой «Знал» / «Не знал», и отслеживанием статистики сессии.</p>
+      <p class="header__mode-description">КАРТОЧКИ. Фокусированное повторение по одной карточке. Ответ скрыт до момента самопроверки.</p>
 
     </div>
   </header>
@@ -75,15 +75,15 @@
   <!-- ================= MAIN ================= -->
   <main class="main">
 
-    <!-- ===== БЛОК БЛИЦА ===== -->
-    <section class="blitz-mode">
-      <div class="blitz-mode__container">
+    <!-- ===== БЛОК КАРТОЧКИ ===== -->
+    <section class="cards-mode">
+      <div class="cards-mode__container">
 
         <!-- Фильтр "Тема" -->
-        <div class="blitz-mode__filter">
-          <label for="blitzTopicFilter">Тема</label>
-          <div class="custom-dropdown" data-select-id="blitzTopicFilter">
-            <select id="blitzTopicFilter" style="display: none;">
+        <div class="cards-mode__filter">
+          <label for="cardsTopicFilter">Тема</label>
+          <div class="custom-dropdown" data-select-id="cardsTopicFilter">
+            <select id="cardsTopicFilter" style="display: none;">
               <option value="all">Все темы</option>
               <!-- темы подставляются из data.json -->
             </select>
@@ -97,41 +97,29 @@
           </div>
         </div>
 
-        <!-- Карточка блиц-режима -->
-        <div class="blitz-mode__card" id="blitzModeCard">
-          <div class="blitz-mode__question-section">
-            <div class="blitz-mode__label">ВОПРОС</div>
-            <div class="blitz-mode__question" id="blitzModeQuestion">
+        <!-- Карточка -->
+        <div class="cards-mode__card" id="cardsModeCard">
+          <div class="cards-mode__question-section">
+            <div class="cards-mode__label">ВОПРОС</div>
+            <div class="cards-mode__question" id="cardsModeQuestion">
               <!-- вопрос рендерится JS-ом -->
             </div>
           </div>
 
-          <div class="blitz-mode__answer-section" id="blitzModeAnswer">
-            <div class="blitz-mode__label">ОТВЕТ</div>
-            <div class="blitz-mode__answer-content" id="blitzModeAnswerContent">
+          <div class="cards-mode__answer-section" id="cardsModeAnswer">
+            <div class="cards-mode__label">ОТВЕТ</div>
+            <div class="cards-mode__answer-content" id="cardsModeAnswerContent">
               <!-- ответ рендерится JS-ом -->
             </div>
           </div>
 
-          <div class="blitz-mode__controls">
-            <button type="button" class="blitz-mode__button blitz-mode__button--show" id="blitzModeShowAnswer">
+          <div class="cards-mode__controls">
+            <button type="button" class="cards-mode__button cards-mode__button--show" id="cardsModeShowAnswer">
               Показать ответ
             </button>
-            <button type="button" class="blitz-mode__button blitz-mode__button--knew" id="blitzModeKnew">
-              Знал
-            </button>
-            <button type="button" class="blitz-mode__button blitz-mode__button--didnt-know" id="blitzModeDidntKnow">
-              Не знал
-            </button>
-            <button type="button" class="blitz-mode__button blitz-mode__button--next" id="blitzModeNext">
+            <button type="button" class="cards-mode__button cards-mode__button--next" id="cardsModeNext">
               Следующий вопрос
             </button>
-          </div>
-
-          <!-- Статистика сессии -->
-          <!-- <div class="blitz-mode__label">СТАТИСТИКА</div> -->
-          <div class="blitz-mode__stats" id="blitzModeStats">
-            Количество ответов: <span id="blitzStatsTotal">0</span> &nbsp;&nbsp; Точность: <span id="blitzStatsAccuracy">0</span>% &nbsp;&nbsp; Серия: х<span id="blitzStatsStreak">0</span>
           </div>
         </div>
 
@@ -161,10 +149,10 @@
   </footer>
 
   <!-- ================= SCRIPTS ================= -->
-  <script src="assets/js/mobile-warning.js"></script>
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/filters.js"></script>
-  <script src="assets/js/blitz.js"></script>
+  <script src="../js/mobile-warning.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/filters.js"></script>
+  <script src="../js/cards.js"></script>
 
 </body>
 </html>
