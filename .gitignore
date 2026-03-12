@@ -19,6 +19,7 @@ ENV/
 .env.example
 
 # IDE
+.codex 
 .cursor/
 .vscode/
 .idea/
@@ -44,3 +45,4 @@ test_*
 test_*.py
 
 .gitattributes
+.cursorignore
