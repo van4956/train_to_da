@@ -44,5 +44,4 @@ spec.md
 test_*
 test_*.py
 
-.gitattributes
 .cursorignore
