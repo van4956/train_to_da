@@ -1,3 +1,4 @@
+# Это тестовый merge request через Codex App
 import json
 import re
 from pathlib import Path
@@ -127,3 +128,4 @@ def build():
 
 if __name__ == "__main__":
     build()
+
